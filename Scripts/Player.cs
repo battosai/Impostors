@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	//read-only constants
-	public float defaultMouseZ {get{return -9f;}}
 	//public but only changeable within class
 	public bool isClicking {get; private set;}
 	public Vector2 mousePosition {get; private set;}
 	public SpriteRenderer rend {get; private set;}
 	public Transform trans {get; private set;}
+	//private read-only constants
+	private float defaultMouseZ {get{return -9f;}}
 
 	void Awake()
 	{
