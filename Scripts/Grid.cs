@@ -10,7 +10,7 @@ public class Grid : MonoBehaviour
 	public float headCount {get{return 9;}}
 	//public but only changeable within class
 	public GameObject grid {get; private set;}
-	public List<GameObject> heads;// {get; private set;}
+	public static List<GameObject> heads {get; private set;}
 	//private read-only constants
 	private float defaultGridZ {get{return 0f;}}
 
@@ -42,7 +42,7 @@ public class Grid : MonoBehaviour
 		{
 			heads.Add(child.gameObject);
 		}
-		for(int i = 0; i < 9; i++)
+		for(int i = 0; i < headCount; i++)
 		{
 			int index = Random.Range(0, heads.Count-1);
 			GameObject selectedHead = heads[index];
@@ -57,10 +57,10 @@ public class Grid : MonoBehaviour
 	private void positionHeads()
 	{
 		float y = 0f;
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < gridDimensions; i++)
 		{
 			float x = -offset;
-			for(int j = 0; j < 3; j++)
+			for(int j = 0; j < gridDimensions; j++)
 			{
 				int index = i*gridDimensions + j;
 				heads[index].transform.position = new Vector3(x, y, defaultGridZ);

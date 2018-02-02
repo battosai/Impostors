@@ -5,7 +5,6 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 	//public but only changeable within class
-	public bool isClicking {get; private set;}
 	public Vector2 mousePosition {get; private set;}
 	public SpriteRenderer rend {get; private set;}
 	public Transform trans {get; private set;}
@@ -21,7 +20,6 @@ public class Player : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-
 	}
 
 	// Update is called once per frame
@@ -36,10 +34,5 @@ public class Player : MonoBehaviour
 		mousePosition = Input.mousePosition;
 		mousePosition = Camera.main.ScreenToWorldPoint(new Vector2(mousePosition.x, mousePosition.y));
 		trans.position = new Vector3(mousePosition.x, mousePosition.y, defaultMouseZ);
-		isClicking = false;
-		if(Input.GetMouseButtonDown(0))
-		{
-			isClicking = true;
-		}
 	}
 }
