@@ -10,14 +10,18 @@ public class Grid : MonoBehaviour
 	public float headCount {get{return 9;}}
 	//public but only changeable within class
 	public GameObject grid {get; private set;}
+	public static GameObject selectedBorder {get; private set;}
 	public static List<GameObject> heads {get; private set;}
+	public static List<GameObject> selectedHeads {get; private set;}
 	//private read-only constants
 	private float defaultGridZ {get{return 0f;}}
 
 	void Awake()
 	{
 		grid = GameObject.Find("Grid");
+		selectedBorder = GameObject.Find("SelectedBorder");
 		heads = new List<GameObject>();
+		selectedHeads = new List<GameObject>();
 	}
 
 	// Use this for initialization
@@ -30,7 +34,6 @@ public class Grid : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
 	}
 
 	//randomizes the order of heads
@@ -50,7 +53,6 @@ public class Grid : MonoBehaviour
 			heads.Remove(selectedHead);
 		}
 		heads = randomizedHeads;
-		Debug.Log("...heads have been randomized");
 	}
 
 	//positions heads in 3x3 grid layout
