@@ -11,6 +11,7 @@ public class Grid : MonoBehaviour
 	//public but only changeable within class
 	public GameObject grid {get; private set;}
 	public static GameObject selectedBorder {get; private set;}
+	public static GameObject dead {get; private set;}
 	public static List<GameObject> heads {get; private set;}
 	public static List<GameObject> selectedHeads {get; private set;}
 	//private read-only constants
@@ -20,6 +21,7 @@ public class Grid : MonoBehaviour
 	{
 		grid = GameObject.Find("Grid");
 		selectedBorder = GameObject.Find("SelectedBorder");
+		dead = GameObject.Find("Dead");
 		heads = new List<GameObject>();
 		selectedHeads = new List<GameObject>();
 	}
