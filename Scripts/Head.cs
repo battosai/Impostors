@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class Head : Grid
 {
-	public float defaultSelectedBorderZ {get{return -9.5f;}}
+	//public attributes
+	public bool isDefector;// {get; set;}
+	public GameObject selectedBorderClone {get; set;}
+	public GameObject deadClone {get; set;}
 	//public attributes, but only changeable within class
+	public bool isDead {get; private set;}
 	public bool isSelected {get; private set;}
 	public Collider2D coll {get; private set;}
-	public GameObject selectedBorderClone {get; private set;}
-	public GameObject deadClone {get; private set;}
+	//private read-only constants
+	private float defaultSelectedBorderZ {get{return -9.5f;}}
 
 	void Awake()
 	{
@@ -34,14 +38,20 @@ public class Head : Grid
 	}
 
 	//when mouse clicks on head, instantiate/destroy selectborderclone
-	private void toggleSelected()
+	//when moving to next round, gamestate calls on all selectedheads
+	public void toggleSelected()
 	{
+		if(!isSelected && Grid.selectedHeads.Count == GameState.selectCount[GameState.gameRound])
+		{
+			Debug.Log("selected: " + Grid.selectedHeads.Count + " Max: " + GameState.selectCount[GameState.gameRound]);
+			return;
+		}
 		isSelected = !isSelected;
 		int index = Grid.heads.IndexOf(gameObject);
 		if(isSelected && selectedBorderClone == null)
 		{
 			Grid.selectedHeads.Add(Grid.heads[index]);
-			selectedBorderClone = Instantiate(Grid.selectedBorder);
+			selectedBorderClone = Instantiate(Grid.selectedBorderSprite);
 			selectedBorderClone.GetComponent<SpriteRenderer>().enabled = true;
 			selectedBorderClone.transform.position = transform.position;
 		}
@@ -66,9 +76,10 @@ public class Head : Grid
 			Grid.selectedHeads.Remove(Grid.heads[index]);
 			Destroy(selectedBorderClone);
 		}
-		deadClone = Instantiate(Grid.dead);
+		deadClone = Instantiate(Grid.deadSprite);
 		deadClone.GetComponent<SpriteRenderer>().enabled = true;
 		deadClone.transform.position = transform.position;
 		coll.enabled = false;
+		isDead = true;
 	}
 }
