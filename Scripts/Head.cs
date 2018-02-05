@@ -66,7 +66,7 @@ public class Head : Grid
 		}
 	}
 
-	private void killHead()
+	public void killHead()
 	{
 		//do later, make restart button first
 		if(selectedBorderClone != null)
