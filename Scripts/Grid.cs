@@ -69,7 +69,6 @@ public class Grid : GameState
 		for(int i = 0; i < defectorCount; i++)
 		{
 			int index = indexList[Random.Range(0, indexList.Count)];
-			Debug.Log("head " + index + " is a defector");
 			GameObject currentHead = heads[index];
 			currentHead.GetComponent<Head>().isDefector = true;
 			defectorHeads.Add(currentHead);

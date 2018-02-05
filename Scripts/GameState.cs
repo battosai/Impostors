@@ -34,41 +34,49 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		checkSelectionCount();
+	}
+
+	//disables/enables proceed button if enough selections are made
+	private void checkSelectionCount()
+	{
+		if(Grid.selectedHeads.Count == selectCount[gameRound])
+		{
+			proceedButton.interactable = true;
+		}
+		else
+		{
+			proceedButton.interactable = false;
+		}
 	}
 
 	//checks conditions for current round and advances to the next one
 	private void proceedToNextRound()
-	{
-		if(Grid.selectedHeads.Count == selectCount[gameRound])
+{
+		if(selectCount[gameRound] > 1)
 		{
-			if(selectCount[gameRound] > 1)
+			//mission round currently
+			foreach(GameObject head in Grid.heads)
 			{
-				//mission round currently
+				if(head.GetComponent<Head>().isDefector)
+					defectorScore++;
 			}
-			else
-			{
-				//interrogation round currently
-				GameObject currentHead = Grid.selectedHeads[0];
-				if(currentHead.GetComponent<Head>().isDefector)
-				{
-					Debug.Log("THIS IS A DEFECTOR");
-				}
-				else
-				{
-					Debug.Log("THIS IS AN ALLY");
-				}
-			}
-			grid.resetSelectedHeads();
-			gameRound++;
 		}
 		else
 		{
-			Debug.Log("Need to select more heads to proceed");
+			//interrogation round currently
+			GameObject currentHead = Grid.selectedHeads[0];
+			if(currentHead.GetComponent<Head>().isDefector)
+				Debug.Log("THIS IS A DEFECTOR");
+			else
+				Debug.Log("THIS IS AN ALLY");
 		}
+		grid.resetSelectedHeads();
+		gameRound++;
 	}
 
 
-	private void playerWin()
+	private void playerWinRound()
 	{
 		playerScore++;
 		//kill a head
