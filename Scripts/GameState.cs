@@ -56,11 +56,15 @@ public class GameState : MonoBehaviour
 		if(selectCount[gameRound] > 1)
 		{
 			//mission round currently
-			foreach(GameObject head in Grid.heads)
+			bool isDefectorPresent = false;
+			foreach(GameObject head in Grid.selectedHeads)
 			{
-				if(head.GetComponent<Head>().isDefector)
-					defectorScore++;
+				isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
 			}
+			if(isDefectorPresent)
+				defectorWinRound();
+			else
+				playerWinRound();
 		}
 		else
 		{
@@ -71,14 +75,37 @@ public class GameState : MonoBehaviour
 			else
 				Debug.Log("THIS IS AN ALLY");
 		}
+		checkEndGame();
 		grid.resetSelectedHeads();
 		gameRound++;
 	}
 
+	private void checkEndGame()
+	{
+		if(playerScore == winScore || defectorScore == winScore)
+		{
+			if(playerScore > defectorScore)
+				Debug.Log("Allied Victory!");
+			else if(defectorScore > playerScore)
+				Debug.Log("Defected Victory!");
+			UnityEditor.EditorApplication.isPlaying = false;
+			 //use Application.Quit();
+		}
+	}
 
 	private void playerWinRound()
 	{
+		Debug.Log("Allies win this round!");
+		int killIndex = Random.Range(0, Grid.selectedHeads.Count);
+		GameObject currentHead = Grid.selectedHeads[killIndex];
+		currentHead.GetComponent<Head>().killHead();
 		playerScore++;
 		//kill a head
+	}
+
+	private void defectorWinRound()
+	{
+		Debug.Log("Defectors win this round!");
+		defectorScore++;
 	}
 }
