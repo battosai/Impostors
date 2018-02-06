@@ -15,18 +15,18 @@ public class GameState : MonoBehaviour
 	public static int gameRound {get; private set;}
 	//private attributes
 	private Button proceedButton;
-	private Grid grid;
+	private Gridd gridd;
 
 	void Awake()
 	{
-		grid = GameObject.Find("Grid").GetComponent<Grid>();
+		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
 	}
 
 	// Use this for initialization
 	void Start()
 	{
-		grid.resetGrid();
+		gridd.resetGridd();
 		gameRound = 0;
 		proceedButton.onClick.AddListener(proceedToNextRound);
 	}
@@ -40,7 +40,7 @@ public class GameState : MonoBehaviour
 	//disables/enables proceed button if enough selections are made
 	private void checkSelectionCount()
 	{
-		if(Grid.selectedHeads.Count == selectCount[gameRound])
+		if(Gridd.selectedHeads.Count == selectCount[gameRound])
 		{
 			proceedButton.interactable = true;
 		}
@@ -57,7 +57,7 @@ public class GameState : MonoBehaviour
 		{
 			//mission round currently
 			bool isDefectorPresent = false;
-			foreach(GameObject head in Grid.selectedHeads)
+			foreach(GameObject head in Gridd.selectedHeads)
 			{
 				isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
 			}
@@ -69,14 +69,14 @@ public class GameState : MonoBehaviour
 		else
 		{
 			//interrogation round currently
-			GameObject currentHead = Grid.selectedHeads[0];
+			GameObject currentHead = Gridd.selectedHeads[0];
 			if(currentHead.GetComponent<Head>().isDefector)
 				Debug.Log("THIS IS A DEFECTOR");
 			else
 				Debug.Log("THIS IS AN ALLY");
 		}
 		checkEndGame();
-		grid.resetSelectedHeads();
+		gridd.resetSelectedHeads();
 		gameRound++;
 	}
 
@@ -96,8 +96,8 @@ public class GameState : MonoBehaviour
 	private void playerWinRound()
 	{
 		Debug.Log("Allies win this round!");
-		int killIndex = Random.Range(0, Grid.selectedHeads.Count);
-		GameObject currentHead = Grid.selectedHeads[killIndex];
+		int killIndex = Random.Range(0, Gridd.selectedHeads.Count);
+		GameObject currentHead = Gridd.selectedHeads[killIndex];
 		currentHead.GetComponent<Head>().killHead();
 		playerScore++;
 		//kill a head
