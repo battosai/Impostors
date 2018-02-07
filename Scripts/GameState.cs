@@ -9,6 +9,11 @@ public class GameState : MonoBehaviour
 	public int winScore {get{return 3;}}
 	public int gameRoundCount {get{return 7;}}
 	public static List<int> selectCount {get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
+	//public attributes
+	public AudioClip playerWinRound;
+	public AudioClip defectorWinRound;
+	public AudioClip select;
+	public AudioClip deselect;
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
@@ -16,6 +21,8 @@ public class GameState : MonoBehaviour
 	//private attributes
 	private Button proceedButton;
 	private Gridd gridd;
+	private string missionText {get{return "Select ";}}
+	private string interrogationText {get{return "Interrogate 1 Individual";}}
 
 	void Awake()
 	{
@@ -26,9 +33,16 @@ public class GameState : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		resetRoundText();
 		gridd.resetGridd();
 		gameRound = 0;
 		proceedButton.onClick.AddListener(proceedToNextRound);
+	}
+
+	public void resetRoundText()
+	{
+		GameObject textMesh = GameObject.Find("Textmesh");
+		textMesh.GetComponent<TextMesh>().text = missionText + selectCount[gameRound].ToString();
 	}
 
 	// Update is called once per frame
@@ -78,6 +92,12 @@ public class GameState : MonoBehaviour
 		checkEndGame();
 		gridd.resetSelectedHeads();
 		gameRound++;
+		//set up ui text for next round
+		GameObject textMesh = GameObject.Find("Textmesh");
+		if(selectCount[gameRound] == 1)
+			textMesh.GetComponent<TextMesh>().text = interrogationText;
+		else
+			textMesh.GetComponent<TextMesh>().text = missionText + selectCount[gameRound].ToString();
 	}
 
 	private void checkEndGame()

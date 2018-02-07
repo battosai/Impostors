@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //responsible for the layout of heads and types of head lists
-public class Gridd : GameState
+public class Gridd : MonoBehaviour
 {
 	//public read-only constants
 	public float offset {get{return 10.5f;}}
@@ -41,6 +41,8 @@ public class Gridd : GameState
 	//method for gamestate to call
 	public void resetGridd()
 	{
+		GameState gameState = GameObject.Find("Player").GetComponent<GameState>();
+		gameState.resetRoundText();
 		randomizeHeads();
 		positionHeads();
 		chooseDefectors();
