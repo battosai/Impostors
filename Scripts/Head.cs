@@ -14,10 +14,12 @@ public class Head : Gridd
 	public Collider2D coll {get; private set;}
 	//private read-only constants
 	private float defaultCloneZ {get{return -1f;}}
+	private GameState gameState;
 
 	void Awake()
 	{
 		coll = GetComponent<Collider2D>();
+		gameState = GameObject.Find("Player").GetComponent<GameState>();
 	}
 
 	// Use this for initialization
@@ -34,7 +36,11 @@ public class Head : Gridd
 	//Note: Can't have other colliders in the way (player object can't have collider)
 	void OnMouseDown()
 	{
+		//when selectCount is reached, can only deselect
+		if(Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound] && !isSelected)
+			return;
 		toggleSelected();
+		gameState.playSelectionSound(isSelected);
 	}
 
 	//when mouse clicks on head, instantiate/destroy selectborderclone

@@ -10,15 +10,16 @@ public class GameState : MonoBehaviour
 	public int gameRoundCount {get{return 7;}}
 	public static List<int> selectCount {get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
 	//public attributes
-	public AudioClip playerWinRound;
-	public AudioClip defectorWinRound;
-	public AudioClip select;
-	public AudioClip deselect;
+	public AudioClip roundVictorySound;
+	public AudioClip roundLossSound;
+	public AudioClip selectSound;
+	public AudioClip deselectSound;
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
 	public static int gameRound {get; private set;}
 	//private attributes
+	private AudioSource audioSource;
 	private Button proceedButton;
 	private Gridd gridd;
 	private string missionText {get{return "Select ";}}
@@ -28,6 +29,7 @@ public class GameState : MonoBehaviour
 	{
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
+		audioSource = GetComponent<AudioSource>();
 	}
 
 	// Use this for initialization
@@ -37,12 +39,29 @@ public class GameState : MonoBehaviour
 		gridd.resetGridd();
 		gameRound = 0;
 		proceedButton.onClick.AddListener(proceedToNextRound);
+		audioSource.loop = false;
+		audioSource.playOnAwake = false;
 	}
 
 	public void resetRoundText()
 	{
 		GameObject textMesh = GameObject.Find("Textmesh");
 		textMesh.GetComponent<TextMesh>().text = missionText + selectCount[gameRound].ToString();
+	}
+
+	public void playSelectionSound(bool isSelected)
+	{
+		Debug.Log("ey");
+		if(isSelected)
+		{
+			audioSource.clip = selectSound;
+			audioSource.Play();
+		}
+		else
+		{
+			audioSource.clip = deselectSound;
+			audioSource.Play();
+		}
 	}
 
 	// Update is called once per frame
@@ -116,6 +135,8 @@ public class GameState : MonoBehaviour
 	private void playerWinRound()
 	{
 		Debug.Log("Allies win this round!");
+		audioSource.clip = roundVictorySound;
+		audioSource.Play();
 		int killIndex = Random.Range(0, Gridd.selectedHeads.Count);
 		GameObject currentHead = Gridd.selectedHeads[killIndex];
 		currentHead.GetComponent<Head>().killHead();
@@ -126,6 +147,8 @@ public class GameState : MonoBehaviour
 	private void defectorWinRound()
 	{
 		Debug.Log("Defectors win this round!");
+		audioSource.clip = roundLossSound;
+		audioSource.Play();
 		defectorScore++;
 	}
 }
