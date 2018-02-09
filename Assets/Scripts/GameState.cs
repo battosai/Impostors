@@ -22,8 +22,9 @@ public class GameState : MonoBehaviour
 	private AudioSource audioSource;
 	private Button proceedButton;
 	private Gridd gridd;
-	private string missionText {get{return "Select ";}}
-	private string interrogationText {get{return "Interrogate 1 Individual";}}
+	private string missionText {get{return "select " + selectCount[gameRound].ToString() + " members for a mission.";}}
+	private string interrogationText {get{return "interrogate 1 individual";}}
+	private string deathText {get{return "an alliance member has been killed!";}}
 
 	void Awake()
 	{
@@ -45,13 +46,13 @@ public class GameState : MonoBehaviour
 
 	public void resetRoundText()
 	{
-		GameObject textMesh = GameObject.Find("Textmesh");
-		textMesh.GetComponent<TextMesh>().text = missionText + selectCount[gameRound].ToString();
+		GameObject instructionText = GameObject.Find("InstructionText");
+		instructionText.GetComponent<TextMesh>().text = missionText;
 	}
 
+	//called by heads individually
 	public void playSelectionSound(bool isSelected)
 	{
-		Debug.Log("ey");
 		if(isSelected)
 		{
 			audioSource.clip = selectSound;
@@ -112,11 +113,11 @@ public class GameState : MonoBehaviour
 		gridd.resetSelectedHeads();
 		gameRound++;
 		//set up ui text for next round
-		GameObject textMesh = GameObject.Find("Textmesh");
+		GameObject instructionText = GameObject.Find("InstructionText");
 		if(selectCount[gameRound] == 1)
-			textMesh.GetComponent<TextMesh>().text = interrogationText;
+			instructionText.GetComponent<TextMesh>().text = interrogationText;
 		else
-			textMesh.GetComponent<TextMesh>().text = missionText + selectCount[gameRound].ToString();
+			instructionText.GetComponent<TextMesh>().text = missionText;
 	}
 
 	private void checkEndGame()
