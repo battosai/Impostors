@@ -43,6 +43,26 @@ public class Head : Gridd
 		gameState.playSelectionSound(isSelected);
 	}
 
+	//gamestate calls when replaying game
+	public void reviveHead()
+	{
+		if(!isDead)
+		{
+			Debug.Log("Reviving a non-dead head");
+			return;
+		}
+		if(isDead && deadClone == null)
+		{
+			isDead = false;
+			Destroy(deadClone);
+			coll.enabled = true;
+		}
+		else
+		{
+			Debug.Log("isDead and gameObject dead clone not synced");
+		}
+	}
+
 	//when mouse clicks on head, instantiate/destroy selectborderclone
 	//when moving to next round, gamestate calls on all selectedheads
 	public void toggleSelected()

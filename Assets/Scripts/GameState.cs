@@ -14,6 +14,9 @@ public class GameState : MonoBehaviour
 	public AudioClip roundLossSound;
 	public AudioClip selectSound;
 	public AudioClip deselectSound;
+	public AudioClip missionInProgressSound;
+	public AudioClip interrogationSound;
+	public List<AudioClip> gunSounds;
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
@@ -21,6 +24,7 @@ public class GameState : MonoBehaviour
 	//private attributes
 	private AudioSource audioSource;
 	private Button proceedButton;
+	private Button replayButton;
 	private Gridd gridd;
 	private string missionText {get{return "select " + selectCount[gameRound].ToString() + " members for a mission.";}}
 	private string interrogationText {get{return "interrogate 1 individual";}}
@@ -30,6 +34,7 @@ public class GameState : MonoBehaviour
 	{
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
+		replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
 		audioSource = GetComponent<AudioSource>();
 	}
 
@@ -38,8 +43,16 @@ public class GameState : MonoBehaviour
 	{
 		resetRoundText();
 		gridd.resetGridd();
+		gridd.resetSelectedHeads();
 		gameRound = 0;
+		playerScore = 0;
+		defectorScore = 0;
 		proceedButton.onClick.AddListener(proceedToNextRound);
+		replayButton.onClick.AddListener(replayGame);
+		proceedButton.gameObject.GetComponent<Image>().enabled = true;
+		proceedButton.interactable = true;
+		replayButton.gameObject.GetComponent<Image>().enabled = false;
+		replayButton.interactable = false;
 		audioSource.loop = false;
 		audioSource.playOnAwake = false;
 	}
@@ -84,9 +97,31 @@ public class GameState : MonoBehaviour
 		}
 	}
 
+	private void replayGame()
+	{
+		Debug.Log("Resetting the Game");
+		gameRound = 0;
+		playerScore = 0;
+		defectorScore = 0;
+		proceedButton.gameObject.GetComponent<Image>().enabled = true;
+		proceedButton.interactable = true;
+		replayButton.gameObject.GetComponent<Image>().enabled = false;
+		replayButton.interactable = false;
+		audioSource.loop = false;
+		audioSource.playOnAwake = false;
+		resetRoundText();
+		updateScoreboards();
+		gridd.resetGridd();
+		gridd.resetSelectedHeads();
+		foreach(GameObject head in Gridd.heads)
+		{
+			head.GetComponent<Head>().reviveHead();
+		}
+	}
+
 	//checks conditions for current round and advances to the next one
 	private void proceedToNextRound()
-{
+	{
 		if(selectCount[gameRound] > 1)
 		{
 			//mission round currently
@@ -111,7 +146,8 @@ public class GameState : MonoBehaviour
 		}
 		checkEndGame();
 		gridd.resetSelectedHeads();
-		gameRound++;
+		if(gameRound + 1 < gameRoundCount)
+			gameRound++;
 		//set up ui text for next round
 		GameObject instructionText = GameObject.Find("InstructionText");
 		if(selectCount[gameRound] == 1)
@@ -128,9 +164,19 @@ public class GameState : MonoBehaviour
 				Debug.Log("Allied Victory!");
 			else if(defectorScore > playerScore)
 				Debug.Log("Defected Victory!");
+			//enableReplayButton();
+			//disable if testing replay button
 			UnityEditor.EditorApplication.isPlaying = false;
-			 //use Application.Quit();
+			//use Application.Quit();
 		}
+	}
+
+	private void updateScoreboards()
+	{
+		GameObject alliedScoreboard = GameObject.Find("AlliedScoreboardText");
+		alliedScoreboard.GetComponent<TextMesh>().text = playerScore.ToString();
+		GameObject defectedScoreboard = GameObject.Find("DefectedScoreboardText");
+		defectedScoreboard.GetComponent<TextMesh>().text = defectorScore.ToString();
 	}
 
 	private void playerWinRound()
@@ -138,11 +184,12 @@ public class GameState : MonoBehaviour
 		Debug.Log("Allies win this round!");
 		audioSource.clip = roundVictorySound;
 		audioSource.Play();
+		//kill head
 		int killIndex = Random.Range(0, Gridd.selectedHeads.Count);
 		GameObject currentHead = Gridd.selectedHeads[killIndex];
 		currentHead.GetComponent<Head>().killHead();
 		playerScore++;
-		//kill a head
+		updateScoreboards();
 	}
 
 	private void defectorWinRound()
@@ -151,5 +198,15 @@ public class GameState : MonoBehaviour
 		audioSource.clip = roundLossSound;
 		audioSource.Play();
 		defectorScore++;
+		updateScoreboards();
+	}
+
+	//enable replay button over the proceed button
+	private void enableReplayButton()
+	{
+		proceedButton.gameObject.GetComponent<Image>().enabled = false;
+		proceedButton.interactable = false;
+		replayButton.gameObject.GetComponent<Image>().enabled = true;
+		replayButton.interactable = true;
 	}
 }
