@@ -16,7 +16,7 @@ public class Gridd : MonoBehaviour
 	public static List<GameObject> selectedHeads {get; private set;}
 	public static List<GameObject> defectorHeads {get; private set;}
 	//private read-only constants
-	private float defaultGridZ {get{return 0f;}}
+	private float defaultGridZ {get{return 100f;}}
 	private int gridDimensions {get{return 3;}}
 
 	void Awake()

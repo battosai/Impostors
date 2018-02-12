@@ -51,7 +51,7 @@ public class Head : Gridd
 			Debug.Log("Reviving a non-dead head");
 			return;
 		}
-		if(isDead && deadClone == null)
+		if(isDead && deadClone != null)
 		{
 			isDead = false;
 			Destroy(deadClone);

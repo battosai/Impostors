@@ -22,6 +22,8 @@ public class GameState : MonoBehaviour
 	public int defectorScore {get; private set;}
 	public static int gameRound {get; private set;}
 	//private attributes
+	private GameObject murderImage;
+	private GameObject murderText;
 	private AudioSource audioSource;
 	private Button proceedButton;
 	private Button replayButton;
@@ -32,6 +34,8 @@ public class GameState : MonoBehaviour
 
 	void Awake()
 	{
+		murderImage = GameObject.Find("MurderImage");
+		murderText = GameObject.Find("MurderText");
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
 		replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
@@ -55,6 +59,8 @@ public class GameState : MonoBehaviour
 		replayButton.interactable = false;
 		audioSource.loop = false;
 		audioSource.playOnAwake = false;
+		murderImage.GetComponent<Image>().enabled = false;
+		murderText.GetComponent<MeshRenderer>().enabled = false;
 	}
 
 	public void resetRoundText()
@@ -99,7 +105,6 @@ public class GameState : MonoBehaviour
 
 	private void replayGame()
 	{
-		Debug.Log("Resetting the Game");
 		gameRound = 0;
 		playerScore = 0;
 		defectorScore = 0;
@@ -115,7 +120,8 @@ public class GameState : MonoBehaviour
 		gridd.resetSelectedHeads();
 		foreach(GameObject head in Gridd.heads)
 		{
-			head.GetComponent<Head>().reviveHead();
+			if(head.GetComponent<Head>().isDead && head.GetComponent<Head>().deadClone != null)
+				head.GetComponent<Head>().reviveHead();
 		}
 	}
 
@@ -130,10 +136,7 @@ public class GameState : MonoBehaviour
 			{
 				isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
 			}
-			if(isDefectorPresent)
-				defectorWinRound();
-			else
-				playerWinRound();
+			StartCoroutine(processNotifications(isDefectorPresent));
 		}
 		else
 		{
@@ -143,6 +146,48 @@ public class GameState : MonoBehaviour
 				Debug.Log("THIS IS A DEFECTOR");
 			else
 				Debug.Log("THIS IS AN ALLY");
+			checkEndGame();
+			gridd.resetSelectedHeads();
+			if(gameRound + 1 < gameRoundCount)
+				gameRound++;
+			//set up ui text for next round
+			GameObject instructionText = GameObject.Find("InstructionText");
+			if(selectCount[gameRound] == 1)
+				instructionText.GetComponent<TextMesh>().text = interrogationText;
+			else
+				instructionText.GetComponent<TextMesh>().text = missionText;
+		}
+		// checkEndGame();
+		// gridd.resetSelectedHeads();
+		// if(gameRound + 1 < gameRoundCount)
+		// 	gameRound++;
+		// //set up ui text for next round
+		// GameObject instructionText = GameObject.Find("InstructionText");
+		// if(selectCount[gameRound] == 1)
+		// 	instructionText.GetComponent<TextMesh>().text = interrogationText;
+		// else
+		// 	instructionText.GetComponent<TextMesh>().text = missionText;
+	}
+
+	private IEnumerator processNotifications(bool isDefectorPresent)
+	{
+		Debug.Log("processing notifications");
+		if(isDefectorPresent)
+		{
+
+		}
+		else
+		{
+
+		}
+		yield return new WaitForSeconds(5);
+		if(isDefectorPresent)
+		{
+			defectorWinRound();
+		}
+		else
+		{
+			playerWinRound();
 		}
 		checkEndGame();
 		gridd.resetSelectedHeads();
@@ -164,9 +209,9 @@ public class GameState : MonoBehaviour
 				Debug.Log("Allied Victory!");
 			else if(defectorScore > playerScore)
 				Debug.Log("Defected Victory!");
-			//enableReplayButton();
+			enableReplayButton();
 			//disable if testing replay button
-			UnityEditor.EditorApplication.isPlaying = false;
+			//UnityEditor.EditorApplication.isPlaying = false;
 			//use Application.Quit();
 		}
 	}
