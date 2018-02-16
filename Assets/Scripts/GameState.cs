@@ -10,36 +10,36 @@ public class GameState : MonoBehaviour
 	public int gameRoundCount {get{return 7;}}
 	public static List<int> selectCount {get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
 	//public attributes
-	public AudioClip roundVictorySound;
-	public AudioClip roundLossSound;
-	public AudioClip selectSound;
-	public AudioClip deselectSound;
-	public AudioClip missionInProgressSound;
-	public AudioClip interrogationSound;
-	public List<AudioClip> gunSounds;
+	// public AudioClip roundVictorySound;
+	// public AudioClip roundLossSound;
+	// public AudioClip selectSound;
+	// public AudioClip deselectSound;
+	// public AudioClip missionInProgressSound;
+	// public AudioClip interrogationSound;
+	// public List<AudioClip> gunSounds;
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
 	public static int gameRound {get; private set;}
 	//private attributes
-	private GameObject murderImage;
-	private GameObject murderText;
-	private AudioSource audioSource;
-	private Button proceedButton;
-	private Button replayButton;
+	// private GameObject murderImage;
+	// private GameObject murderText;
+	// private AudioSource audioSource;
+	// private Button proceedButton;
+	// private Button replayButton;
 	private Gridd gridd;
-	private string missionText {get{return "select " + selectCount[gameRound].ToString() + " members for a mission.";}}
-	private string interrogationText {get{return "interrogate 1 individual";}}
-	private string deathText {get{return "an alliance member has been killed!";}}
+	// private string missionText {get{return "select " + selectCount[gameRound].ToString() + " members for a mission.";}}
+	// private string interrogationText {get{return "interrogate 1 individual";}}
+	// private string deathText {get{return "an alliance member has been killed!";}}
 
 	void Awake()
 	{
-		murderImage = GameObject.Find("MurderImage");
-		murderText = GameObject.Find("MurderText");
+		// murderImage = GameObject.Find("MurderImage");
+		// murderText = GameObject.Find("MurderText");
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
-		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
-		replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
-		audioSource = GetComponent<AudioSource>();
+		// proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
+		// replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
+		// audioSource = GetComponent<AudioSource>();
 	}
 
 	// Use this for initialization
@@ -51,16 +51,16 @@ public class GameState : MonoBehaviour
 		gameRound = 0;
 		playerScore = 0;
 		defectorScore = 0;
-		proceedButton.onClick.AddListener(proceedToNextRound);
-		replayButton.onClick.AddListener(replayGame);
-		proceedButton.gameObject.GetComponent<Image>().enabled = true;
-		proceedButton.interactable = true;
-		replayButton.gameObject.GetComponent<Image>().enabled = false;
-		replayButton.interactable = false;
-		audioSource.loop = false;
-		audioSource.playOnAwake = false;
-		murderImage.GetComponent<Image>().enabled = false;
-		murderText.GetComponent<MeshRenderer>().enabled = false;
+		// proceedButton.onClick.AddListener(proceedToNextRound);
+		// replayButton.onClick.AddListener(replayGame);
+		// proceedButton.gameObject.GetComponent<Image>().enabled = true;
+		// proceedButton.interactable = true;
+		// replayButton.gameObject.GetComponent<Image>().enabled = false;
+		// replayButton.interactable = false;
+		// audioSource.loop = false;
+		// audioSource.playOnAwake = false;
+		// murderImage.GetComponent<Image>().enabled = false;
+		// murderText.GetComponent<MeshRenderer>().enabled = false;
 	}
 
 	public void resetRoundText()
@@ -125,6 +125,7 @@ public class GameState : MonoBehaviour
 		}
 	}
 
+	//replace this with listener from gamestate to handle non-ui things
 	//checks conditions for current round and advances to the next one
 	private void proceedToNextRound()
 	{
