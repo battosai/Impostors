@@ -16,20 +16,24 @@ public class UIHandler : MonoBehaviour
 	public List<AudioClip> gunSounds;
   //private attributes
 	private Image deathImage;
-  private List<Image> missionResultImage;
+  private Image missionResultImage;
   private MeshRenderer missionResultMesh;
 	private MeshRenderer deathMesh;
+  private MeshRenderer instructionMesh;
 	private AudioSource audioSource;
 	private Button proceedButton;
 	private Button replayButton;
-  private string missionText {get{return "select " + selectCount[gameRound].ToString() + " members for a mission.";}}
+  private string missionText {get{return "select " + GameState.selectCount[GameState.gameRound].ToString() + " members for a mission.";}}
   private string missionVictoryText {get{return "successful mission!";}}
   private string missionLossText {get{return "failed mission!";}}
+  private string interrogationVictoryText {get{return "this is a defector!";}}
+  private string interrogationLossText {get{return "this is an alliance member!";}}
   private string interrogationText {get{return "interrogate 1 individual";}}
-	private string deathText {get{return "an alliance member has been killed!";}}
-
+	private string deathText {get{return "an alliance member\nhas been killed!";}}
+  //GameState will call all coroutines in uihandler!!!!!!!!!!
   void Awake()
   {
+    instructionMesh = GameObject.Find("InstructionText").GetComponent<MeshRenderer>();
     deathImage = GameObject.Find("DeathImage").GetComponent<Image>();
     deathMesh = GameObject.Find("DeathText").GetComponent<MeshRenderer>();
     missionResultImage = GameObject.Find("MissionResultImage").GetComponent<Image>();
@@ -41,13 +45,17 @@ public class UIHandler : MonoBehaviour
 
   void Start()
   {
-    reset();
-    proceedButton.onClick.AddListener(proceed);
-		replayButton.onClick.AddListener(replay);
   }
 
-  public static void reset()
+  void Update()
   {
+    checkSelectionCount();
+  }
+
+  public void reset()
+  {
+    instructionMesh.enabled = true;
+    instructionMesh.GetComponent<TextMesh>().text = missionText;
     missionResultImage.enabled = false;
     missionResultMesh.enabled = false;
     deathImage.enabled = false;
@@ -58,6 +66,40 @@ public class UIHandler : MonoBehaviour
 		replayButton.interactable = false;
     audioSource.loop = false;
 		audioSource.playOnAwake = false;
+  }
+
+  public void playSelectionSound(bool isSelected)
+  {
+    if(isSelected)
+		{
+			audioSource.clip = selectSound;
+			audioSource.Play();
+		}
+		else
+		{
+			audioSource.clip = deselectSound;
+			audioSource.Play();
+		}
+  }
+
+  public void enableReplayButton()
+  {
+    proceedButton.gameObject.GetComponent<Image>().enabled = false;
+    proceedButton.interactable = false;
+    replayButton.gameObject.GetComponent<Image>().enabled = true;
+    replayButton.interactable = true;
+  }
+
+  private void checkSelectionCount()
+  {
+    if(Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound])
+    {
+      proceedButton.interactable = true;
+    }
+    else
+    {
+      proceedButton.interactable = false;
+    }
   }
 
   private void proceed()
@@ -75,50 +117,109 @@ public class UIHandler : MonoBehaviour
     else
     {
       //interrogation round
+			GameObject currentHead = Gridd.selectedHeads[0];
+      StartCoroutine(processInterrogation(currentHead.GetComponent<Head>().isDefector));
     }
   }
 
-  private IEnumerator processMission(bool isDefectorPresent)
+  //process mission visuals
+  public IEnumerator processMission(bool isDefectorPresent)
   {
     audioSource.clip = missionInProgressSound;
     audioSource.Play();
-    yield return new WaitForSeconds(2);
-    displayMissionNotif();
-    yield return new WaitForSeconds(5);
+    yield return new WaitForSeconds(GameState.waitTime);
+    displayMissionNotif(isDefectorPresent);
+    yield return new WaitForSeconds(GameState.waitTime);
     removeMissionNotif();
     if(!isDefectorPresent)
     {
       displayDeathNotif();
-      yield return new WaitForSeconds(5);
+      yield return new WaitForSeconds(GameState.waitTime);
       removeDeathNotif();
     }
   }
 
+  public IEnumerator processInterrogation(bool isDefector)
+  {
+    audioSource.clip = interrogationSound;
+    audioSource.Play();
+    yield return new WaitForSeconds(GameState.waitTime);
+    displayInterrogationNotif(isDefector);
+    yield return new WaitForSeconds(GameState.waitTime);
+    removeInterrogationNotif();
+  }
+
+  public void updateInstructions()
+  {
+    if(GameState.selectCount[GameState.gameRound] == 1)
+      instructionMesh.GetComponent<TextMesh>().text = interrogationText;
+    else
+      instructionMesh.GetComponent<TextMesh>().text = missionText;
+  }
+
+  //shares objects with displayInterrogationNotif
   private void displayMissionNotif(bool isDefectorPresent)
   {
     missionResultImage.enabled = true;
     missionResultMesh.enabled = true;
     if(isDefectorPresent)
     {
-      missionResultImage.image = missionResultSprites[1];
-      missionResultMesh.text = missionLossText;
+      //fail
+      audioSource.clip = missionLossSound;
+      audioSource.Play();
+      missionResultImage.sprite = missionResultSprites[1];
+      missionResultMesh.GetComponent<TextMesh>().text = missionLossText;
     }
     else
     {
-      missionResultImage.image = missionResultSprites[0];
-      missionResultMesh.text = missionVictoryText;
+      //success
+      audioSource.clip = missionVictorySound;
+      audioSource.Play();
+      missionResultImage.sprite = missionResultSprites[0];
+      missionResultMesh.GetComponent<TextMesh>().text = missionVictoryText;
     }
   }
+
+  //functionally the same as removeInterrogationNotif, they share objects
   private void removeMissionNotif()
   {
     missionResultImage.enabled = false;
     missionResultMesh.enabled = false;
   }
+
+  //shares objects with displayMissionNotif
+  private void displayInterrogationNotif(bool isDefector)
+  {
+    missionResultImage.enabled = true;
+    missionResultMesh.enabled = true;
+    if(isDefector)
+    {
+      //found defector
+      missionResultImage.sprite = missionResultSprites[0];
+      missionResultMesh.GetComponent<TextMesh>().text = interrogationVictoryText;
+    }
+    else
+    {
+      //found alliance member
+      missionResultImage.sprite = missionResultSprites[1];
+      missionResultMesh.GetComponent<TextMesh>().text = interrogationLossText;
+    }
+  }
+
+  //functionally the same as removeMissionNotif, they share objects
+  private void removeInterrogationNotif()
+  {
+    missionResultImage.enabled = false;
+    missionResultMesh.enabled = false;
+  }
+
   private void displayDeathNotif()
   {
+    audioSource.clip = gunSounds[Random.Range(0, 2)];
+    audioSource.Play();
     deathImage.enabled = true;
     deathMesh.enabled = true;
-    deathMesh.text = deathText;
+    deathMesh.GetComponent<TextMesh>().text = deathText;
   }
   private void removeDeathNotif()
   {

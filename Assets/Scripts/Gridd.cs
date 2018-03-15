@@ -36,13 +36,15 @@ public class Gridd : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if(selectedHeads == null)
+			Debug.Log("selectedHeads List is null for some reason!");
 	}
 
 	//method for gamestate to call
 	public void resetGridd()
 	{
-		GameState gameState = GameObject.Find("Player").GetComponent<GameState>();
-		gameState.resetRoundText();
+		// GameState gameState = GameObject.Find("Player").GetComponent<GameState>();
+		// gameState.resetRoundText();
 		randomizeHeads();
 		positionHeads();
 		chooseDefectors();

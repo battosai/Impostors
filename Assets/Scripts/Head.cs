@@ -13,13 +13,15 @@ public class Head : Gridd
 	public bool isSelected {get; private set;}
 	public Collider2D coll {get; private set;}
 	//private read-only constants
-	private float defaultCloneZ {get{return -1f;}}
-	private GameState gameState;
+	private float defaultCloneZ {get{return 99f;}}
+	// private GameState gameState;
+	private UIHandler uiHandler;
 
 	void Awake()
 	{
 		coll = GetComponent<Collider2D>();
-		gameState = GameObject.Find("Player").GetComponent<GameState>();
+		// gameState = GameObject.Find("Player").GetComponent<GameState>();
+		uiHandler = GameObject.Find("Player").GetComponent<UIHandler>();
 	}
 
 	// Use this for initialization
@@ -40,7 +42,7 @@ public class Head : Gridd
 		if(Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound] && !isSelected)
 			return;
 		toggleSelected();
-		gameState.playSelectionSound(isSelected);
+		uiHandler.playSelectionSound(isSelected);
 	}
 
 	//gamestate calls when replaying game
