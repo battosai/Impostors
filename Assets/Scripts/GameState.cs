@@ -47,6 +47,7 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		Debug.Log(Gridd.selectedHeads.Count);
 	}
 
 	private void replayGame()
@@ -82,19 +83,8 @@ public class GameState : MonoBehaviour
 		{
 			//interrogation round
 			GameObject currentHead = Gridd.selectedHeads[0];
-			processInterrogation(currentHead.GetComponent<Head>().isDefector);
+			StartCoroutine(processInterrogation(currentHead.GetComponent<Head>().isDefector));
 		}
-		checkEndGame();
-		gridd.resetSelectedHeads();
-		if(gameRound + 1 < gameRoundCount)
-			gameRound++;
-
-		// //set up ui text for next round
-		// GameObject instructionText = GameObject.Find("InstructionText");
-		// if(selectCount[gameRound] == 1)
-		// 	instructionText.GetComponent<TextMesh>().text = interrogationText;
-		// else
-		// 	instructionText.GetComponent<TextMesh>().text = missionText;
 	}
 
 	private IEnumerator processMission(bool isDefectorPresent)
@@ -110,12 +100,21 @@ public class GameState : MonoBehaviour
 		{
 			playerWinRound();
 		}
+		checkEndGame();
+		gridd.resetSelectedHeads();
+		if(gameRound + 1 < gameRoundCount)
+			gameRound++;
 	}
 
-	private void processInterrogation(bool isDefector)
+	private IEnumerator processInterrogation(bool isDefector)
 	{
 		Debug.Log("processing interrogation...");
 		StartCoroutine(uiHandler.processInterrogation(isDefector));
+		yield return new WaitForSeconds(waitTime);
+		checkEndGame();
+		gridd.resetSelectedHeads();
+		if(gameRound + 1 < gameRoundCount)
+			gameRound++;
 	}
 
 	private void checkEndGame()
@@ -144,11 +143,8 @@ public class GameState : MonoBehaviour
 	private void playerWinRound()
 	{
 		Debug.Log("Allies win this round!");
-		// audioSource.clip = roundVictorySound;
-		// audioSource.Play();
 		//kill head
 		int killIndex = Random.Range(0, Gridd.selectedHeads.Count);
-		Debug.Log(killIndex);
 		GameObject currentHead = Gridd.selectedHeads[killIndex];
 		currentHead.GetComponent<Head>().killHead();
 		playerScore++;

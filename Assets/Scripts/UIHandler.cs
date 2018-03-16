@@ -137,6 +137,7 @@ public class UIHandler : MonoBehaviour
       yield return new WaitForSeconds(GameState.waitTime);
       removeDeathNotif();
     }
+    updateInstructions();
   }
 
   public IEnumerator processInterrogation(bool isDefector)
@@ -147,9 +148,10 @@ public class UIHandler : MonoBehaviour
     displayInterrogationNotif(isDefector);
     yield return new WaitForSeconds(GameState.waitTime);
     removeInterrogationNotif();
+    updateInstructions();
   }
 
-  public void updateInstructions()
+  private void updateInstructions()
   {
     if(GameState.selectCount[GameState.gameRound] == 1)
       instructionMesh.GetComponent<TextMesh>().text = interrogationText;
