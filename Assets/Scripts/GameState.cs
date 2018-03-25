@@ -91,7 +91,7 @@ public class GameState : MonoBehaviour
 	{
 		Debug.Log("processing mission...");
 		StartCoroutine(uiHandler.processMission(isDefectorPresent));
-		yield return new WaitForSeconds(waitTime);
+		yield return new WaitForSeconds(waitTime*2);
 		if(isDefectorPresent)
 		{
 			defectorWinRound();

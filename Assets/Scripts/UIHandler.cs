@@ -27,10 +27,10 @@ public class UIHandler : MonoBehaviour
   private string missionVictoryText {get{return "successful mission!";}}
   private string missionLossText {get{return "failed mission!";}}
   private string interrogationVictoryText {get{return "this is a defector!";}}
-  private string interrogationLossText {get{return "this is an alliance member!";}}
+  private string interrogationLossText {get{return "this is an\nalliance member!";}}
   private string interrogationText {get{return "interrogate 1 individual";}}
 	private string deathText {get{return "an alliance member\nhas been killed!";}}
-  //GameState will call all coroutines in uihandler!!!!!!!!!!
+
   void Awake()
   {
     instructionMesh = GameObject.Find("InstructionText").GetComponent<MeshRenderer>();
