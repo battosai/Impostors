@@ -47,12 +47,11 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		Debug.Log(Gridd.selectedHeads.Count);
+		Debug.Log(selectCount[gameRound]);
 	}
 
 	private void replayGame()
 	{
-		uiHandler.reset();
 		gameRound = 0;
 		playerScore = 0;
 		defectorScore = 0;
@@ -64,6 +63,7 @@ public class GameState : MonoBehaviour
 			if(head.GetComponent<Head>().isDead && head.GetComponent<Head>().deadClone != null)
 				head.GetComponent<Head>().reviveHead();
 		}
+		uiHandler.reset();
 	}
 
 	//checks conditions for current round and advances to the next one
@@ -154,18 +154,7 @@ public class GameState : MonoBehaviour
 	private void defectorWinRound()
 	{
 		Debug.Log("Defectors win this round!");
-		// audioSource.clip = roundLossSound;
-		// audioSource.Play();
 		defectorScore++;
 		updateScoreboards();
 	}
-
-	//enable replay button over the proceed button
-	// private void enableReplayButton()
-	// {
-	// 	proceedButton.gameObject.GetComponent<Image>().enabled = false;
-	// 	proceedButton.interactable = false;
-	// 	replayButton.gameObject.GetComponent<Image>().enabled = true;
-	// 	replayButton.interactable = true;
-	// }
 }
