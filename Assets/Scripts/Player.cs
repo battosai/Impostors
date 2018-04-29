@@ -10,9 +10,12 @@ public class Player : MonoBehaviour
 	public Transform trans {get; private set;}
 	//private read-only constants
 	private float defaultMouseZ {get{return -9f;}}
+	//completely private
+	private Camera sceneCamera;
 
 	void Awake()
 	{
+		sceneCamera = Camera.main;
 		rend = GetComponent<SpriteRenderer>();
 		trans = GetComponent<Transform>();
 	}
@@ -32,7 +35,7 @@ public class Player : MonoBehaviour
 	private void takeUserInputs()
 	{
 		mousePosition = Input.mousePosition;
-		mousePosition = Camera.main.ScreenToWorldPoint(new Vector2(mousePosition.x, mousePosition.y));
+		mousePosition = sceneCamera.ScreenToWorldPoint(new Vector2(mousePosition.x, mousePosition.y));
 		trans.position = new Vector3(mousePosition.x, mousePosition.y, defaultMouseZ);
 	}
 }

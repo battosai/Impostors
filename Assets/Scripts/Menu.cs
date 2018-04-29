@@ -2,31 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Menu : UIHandler
 {
   private Button startButton;
-  private Button exitButton;
-  private Button optionsButton;
-  private Button aboutButton;
-  private MeshRenderer aboutMesh;
-  private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
+  // private Button exitButton;
+  // private Button optionsButton;
+  // private Button aboutButton;
+  // private MeshRenderer aboutMesh;
+  // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
 
   void Awake()
   {
     startButton = GameObject.Find("StartButton").GetComponent<Button>();
-    exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
-    optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
-    aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
-    aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
+    // exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
+    // optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
+    // aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
+    // aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
   }
 
   void Start()
   {
     startButton.onClick.AddListener(startGame);
-    exitButton.onClick.AddListener(exitApp);
-    optionsButton.onClick.AddListener(customizeOptions);
-    aboutButton.onClick.AddListener(displayAbout);
+    // exitButton.onClick.AddListener(exitApp);
+    // optionsButton.onClick.AddListener(customizeOptions);
+    // aboutButton.onClick.AddListener(displayAbout);
     //should also add loadsavedata call
   }
 
@@ -38,6 +39,9 @@ public class Menu : UIHandler
   void startGame()
   {
     //load scene with actual game
+    //eventually make the game scene load asynchronously with a load screen
+    //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.LoadSceneAsync.html
+    SceneManager.LoadScene("Game");
   }
 
   //exits app when exitButton is clicked

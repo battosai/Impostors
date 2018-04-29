@@ -47,9 +47,11 @@ public class GameState : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		//debugging: shows the number of people to select for current round
 		Debug.Log(selectCount[gameRound]);
 	}
 
+	//resets game scores, rounds, grid layout, and heads
 	private void replayGame()
 	{
 		gameRound = 0;
