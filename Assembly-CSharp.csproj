@@ -56,6 +56,8 @@
      <Compile Include="Assets\Scripts\Head.cs" />
      <Compile Include="Assets\Scripts\Menu.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\PlayerData.cs" />
+     <Compile Include="Assets\Scripts\PlayerPrefs2.cs" />
      <Compile Include="Assets\Scripts\UIHandler.cs" />
      <None Include="Assets\Imported Assets\Pixel Font - Tripfive\_README.txt" />
  <Reference Include="UnityEngine.UI">
