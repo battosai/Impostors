@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPrefs2
+public static class PlayerPrefs2
 {
 	//The PlayerPrefs class in Unity does not include methods for bool types!
 

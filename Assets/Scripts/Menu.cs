@@ -15,6 +15,8 @@ public class Menu : MonoBehaviour
 
   void Awake()
   {
+    //call check to call constructor for playerdata
+    PlayerData.checkPlayerPrefs();
     startButton = GameObject.Find("StartButton").GetComponent<Button>();
     exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
     optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
@@ -31,6 +33,10 @@ public class Menu : MonoBehaviour
     //should also add loadsavedata call
   }
 
+  void Update()
+  {
+  }
+
   //starts game when startButton is clicked
   private void startGame()
   {
@@ -44,7 +50,8 @@ public class Menu : MonoBehaviour
   private void exitApp()
   {
     //save persistent data
-    //working on that
+    PlayerPrefs.Save();
+    Debug.Log("Saved!");
     //for editor, use below for exiting
     UnityEditor.EditorApplication.isPlaying = false;
     //for build, use below for exiting
@@ -55,7 +62,9 @@ public class Menu : MonoBehaviour
   private void customizeOptions()
   {
     //be sure to set these values in playerpref
-    Debug.Log("you aren't anyones' 'option' gurl");
+    //Debug.Log("you aren't anyones' 'option' gurl");
+    //temporary for testing saveload
+    PlayerData.toggleMusic();
   }
 
   //display about page when aboutButton is clicked
