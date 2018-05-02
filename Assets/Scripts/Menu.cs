@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+  //private constants
+  private Vector2 titleOffset {get{return new Vector2(0, -400);}}
+  //private components
   private Button startButton;
   private Button exitButton;
   private Button optionsButton;
@@ -15,8 +18,8 @@ public class Menu : MonoBehaviour
 
   void Awake()
   {
-    //call check to call constructor for playerdata
-    PlayerData.checkPlayerPrefs();
+    //call load to call constructor for playerdata
+    PlayerData.load();
     startButton = GameObject.Find("StartButton").GetComponent<Button>();
     exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
     optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
@@ -29,12 +32,7 @@ public class Menu : MonoBehaviour
     startButton.onClick.AddListener(startGame);
     exitButton.onClick.AddListener(exitApp);
     optionsButton.onClick.AddListener(customizeOptions);
-    // aboutButton.onClick.AddListener(displayAbout);
-    //should also add loadsavedata call
-  }
-
-  void Update()
-  {
+    aboutButton.onClick.AddListener(displayAbout);
   }
 
   //starts game when startButton is clicked
@@ -50,7 +48,7 @@ public class Menu : MonoBehaviour
   private void exitApp()
   {
     //save persistent data
-    PlayerPrefs.Save();
+    PlayerData.save();
     Debug.Log("Saved!");
     //for editor, use below for exiting
     UnityEditor.EditorApplication.isPlaying = false;
@@ -73,8 +71,4 @@ public class Menu : MonoBehaviour
     //give the player some brian bio
     Debug.Log("do you have some time to learn about brian");
   }
-
-  //make a new class for handling persistent data? yes pls
-  private void loadSaveData()
-  {}
 }

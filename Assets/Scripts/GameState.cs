@@ -10,7 +10,6 @@ public class GameState : MonoBehaviour
 	public int gameRoundCount {get{return 7;}}
 	public static int waitTime {get{return 2;}}
 	public static List<int> selectCount {get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
-	//public attributes
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
@@ -48,7 +47,7 @@ public class GameState : MonoBehaviour
 	void Update()
 	{
 		//debugging: shows the number of people to select for current round
-		Debug.Log(selectCount[gameRound]);
+		//Debug.Log(selectCount[gameRound]);
 	}
 
 	//resets game scores, rounds, grid layout, and heads
@@ -124,13 +123,15 @@ public class GameState : MonoBehaviour
 		if(playerScore == winScore || defectorScore == winScore)
 		{
 			if(playerScore > defectorScore)
+			{
 				Debug.Log("Allied Victory!");
+				PlayerData.addToken();
+			}
 			else if(defectorScore > playerScore)
+			{
 				Debug.Log("Defected Victory!");
+			}
 			uiHandler.enableReplayButton();
-			//disable if testing replay button
-			//UnityEditor.EditorApplication.isPlaying = false;
-			//use Application.Quit();
 		}
 	}
 

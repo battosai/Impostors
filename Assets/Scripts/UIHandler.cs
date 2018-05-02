@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//handles notifications, buttons, sounds
+//also handles updating from playerdata file into the actual game
+
 public class UIHandler : MonoBehaviour
 {
   //public attributes
@@ -15,12 +18,14 @@ public class UIHandler : MonoBehaviour
 	public AudioClip interrogationSound;
 	public List<AudioClip> gunSounds;
   //private attributes
+  private GameObject endGameMenu;
 	private Image deathImage;
   private Image missionResultImage;
   private MeshRenderer missionResultMesh;
 	private MeshRenderer deathMesh;
   private MeshRenderer instructionMesh;
 	private AudioSource audioSource;
+  private AudioSource musicAudioSource;
 	private Button proceedButton;
 	private Button replayButton;
   private string missionText {get{return "select " + GameState.selectCount[GameState.gameRound].ToString() + " members for a mission.";}}
@@ -33,6 +38,7 @@ public class UIHandler : MonoBehaviour
 
   void Awake()
   {
+    endGameMenu = GameObject.Find("EndGameMenu");
     instructionMesh = GameObject.Find("InstructionText").GetComponent<MeshRenderer>();
     deathImage = GameObject.Find("DeathImage").GetComponent<Image>();
     deathMesh = GameObject.Find("DeathText").GetComponent<MeshRenderer>();
@@ -41,6 +47,8 @@ public class UIHandler : MonoBehaviour
     proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
     replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
     audioSource = GetComponent<AudioSource>();
+    musicAudioSource = GameObject.Find("GameCamera").GetComponent<AudioSource>();
+    PlayerData.match(musicAudioSource);
   }
 
   void Start()
@@ -64,6 +72,7 @@ public class UIHandler : MonoBehaviour
 		proceedButton.interactable = true;
 		replayButton.gameObject.GetComponent<Image>().enabled = false;
 		replayButton.interactable = false;
+    endGameMenu.SetActive(false);
     audioSource.loop = false;
 		audioSource.playOnAwake = false;
   }
@@ -82,10 +91,12 @@ public class UIHandler : MonoBehaviour
 		}
   }
 
+  //replace with enable endgamemenu
   public void enableReplayButton()
   {
     proceedButton.gameObject.GetComponent<Image>().enabled = false;
     proceedButton.interactable = false;
+    endGameMenu.SetActive(true);
     replayButton.gameObject.GetComponent<Image>().enabled = true;
     replayButton.interactable = true;
   }
