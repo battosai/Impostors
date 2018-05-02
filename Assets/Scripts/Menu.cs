@@ -38,6 +38,8 @@ public class Menu : MonoBehaviour
   //starts game when startButton is clicked
   private void startGame()
   {
+    //save playerprefs from menu scene
+    PlayerData.save();
     //load scene with actual game
     //eventually make the game scene load asynchronously with a load screen
     //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.LoadSceneAsync.html

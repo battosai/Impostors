@@ -27,7 +27,6 @@ public class UIHandler : MonoBehaviour
 	private AudioSource audioSource;
   private AudioSource musicAudioSource;
 	private Button proceedButton;
-	private Button replayButton;
   private string missionText {get{return "select " + GameState.selectCount[GameState.gameRound].ToString() + " members for a mission.";}}
   private string missionVictoryText {get{return "successful mission!";}}
   private string missionLossText {get{return "failed mission!";}}
@@ -45,7 +44,6 @@ public class UIHandler : MonoBehaviour
     missionResultImage = GameObject.Find("MissionResultImage").GetComponent<Image>();
     missionResultMesh = GameObject.Find("MissionResultText").GetComponent<MeshRenderer>();
     proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
-    replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
     audioSource = GetComponent<AudioSource>();
     musicAudioSource = GameObject.Find("GameCamera").GetComponent<AudioSource>();
     PlayerData.match(musicAudioSource);
@@ -70,8 +68,6 @@ public class UIHandler : MonoBehaviour
     deathMesh.enabled = false;
     proceedButton.gameObject.GetComponent<Image>().enabled = true;
 		proceedButton.interactable = true;
-		replayButton.gameObject.GetComponent<Image>().enabled = false;
-		replayButton.interactable = false;
     endGameMenu.SetActive(false);
     audioSource.loop = false;
 		audioSource.playOnAwake = false;
@@ -92,13 +88,11 @@ public class UIHandler : MonoBehaviour
   }
 
   //replace with enable endgamemenu
-  public void enableReplayButton()
+  public void enableEndGameMenu()
   {
     proceedButton.gameObject.GetComponent<Image>().enabled = false;
     proceedButton.interactable = false;
     endGameMenu.SetActive(true);
-    replayButton.gameObject.GetComponent<Image>().enabled = true;
-    replayButton.interactable = true;
   }
 
   private void checkSelectionCount()

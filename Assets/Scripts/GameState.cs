@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameState : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class GameState : MonoBehaviour
 	private Gridd gridd;
 	private Button proceedButton;
 	private Button replayButton;
+	private Button exitButton;
+	private Button backButton;
 
 	void Awake()
 	{
@@ -27,6 +30,8 @@ public class GameState : MonoBehaviour
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
     replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
+		exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
+		backButton = GameObject.Find("BackButton").GetComponent<Button>();
 	}
 
 	// Use this for initialization
@@ -41,6 +46,8 @@ public class GameState : MonoBehaviour
 		defectorScore = 0;
 		proceedButton.onClick.AddListener(proceedToNextRound);
 		replayButton.onClick.AddListener(replayGame);
+		backButton.onClick.AddListener(backToMainMenu);
+		exitButton.onClick.AddListener(exitApp);
 	}
 
 	// Update is called once per frame
@@ -48,6 +55,27 @@ public class GameState : MonoBehaviour
 	{
 		//debugging: shows the number of people to select for current round
 		//Debug.Log(selectCount[gameRound]);
+	}
+
+	//returns to main menu scene from game scene
+	private void backToMainMenu()
+	{
+		//save playerprefs from game scene
+		PlayerData.save();
+		//load main menu scene
+		SceneManager.LoadScene("MainMenu");
+	}
+
+	//exits app when exitButton is clicked
+	private void exitApp()
+	{
+		//save persistent data
+    PlayerData.save();
+    Debug.Log("Saved!");
+    //for editor, use below for exiting
+    UnityEditor.EditorApplication.isPlaying = false;
+    //for build, use below for exiting
+    // Application.Quit();
 	}
 
 	//resets game scores, rounds, grid layout, and heads
@@ -131,7 +159,7 @@ public class GameState : MonoBehaviour
 			{
 				Debug.Log("Defected Victory!");
 			}
-			uiHandler.enableReplayButton();
+			uiHandler.enableEndGameMenu();
 		}
 	}
 

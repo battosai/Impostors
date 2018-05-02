@@ -43,9 +43,10 @@ public static class PlayerData
 	public static void addToken()
 	{
 		tokens++;
+		Debug.Log("You now have " + tokens + " tokens");
 	}
 
-	//save everything to playerprefs, use when exiting app
+	//save everything to playerprefs, use when exiting app or switching scenes
 	public static void save()
 	{
 		PlayerPrefs2.SetBool("isMusicOn", isMusicOn);
@@ -60,8 +61,8 @@ public static class PlayerData
 		//music
 		if(PlayerPrefs.HasKey("isMusicOn"))
 		{
-			Debug.Log("Music was " + isMusicOn + " last time");
 			isMusicOn = PlayerPrefs2.GetBool("isMusicOn");
+			Debug.Log("Music was " + isMusicOn + " last time");
 		}
 		else
 		{
@@ -72,8 +73,8 @@ public static class PlayerData
 		//tokens
 		if(PlayerPrefs.HasKey("tokens"))
 		{
-			Debug.Log("Player had " + tokens + " tokens last time");
 			tokens = PlayerPrefs.GetInt("tokens");
+			Debug.Log("Player had " + tokens + " tokens last time");
 		}
 		else
 		{
