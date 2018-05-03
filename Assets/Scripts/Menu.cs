@@ -13,6 +13,7 @@ public class Menu : MonoBehaviour
   private Button exitButton;
   private Button optionsButton;
   private Button aboutButton;
+  private Transform trans;
   // private MeshRenderer aboutMesh;
   // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
 
@@ -24,6 +25,7 @@ public class Menu : MonoBehaviour
     exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
     optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
     aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
+    trans = GetComponent<Transform>();
     // aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
   }
 
@@ -33,6 +35,23 @@ public class Menu : MonoBehaviour
     exitButton.onClick.AddListener(exitApp);
     optionsButton.onClick.AddListener(customizeOptions);
     aboutButton.onClick.AddListener(displayAbout);
+    //transition from title to mainmenu
+    StartCoroutine(titleTransition());
+    //trans.position = titleOffset;
+  }
+
+  //coroutine for sliding title up and revealing main menu
+  private IEnumerator titleTransition()
+  {
+    Debug.Log(Mathf.Abs(titleOffset.y));
+    for(int i = 0; i <= Mathf.Abs(titleOffset.y); i++)
+    {
+      Vector2 pos = trans.localPosition;
+      Debug.Log(trans.localPosition);
+      pos += new Vector2(0, 1);
+      trans.localPosition = pos;
+      yield return null;//new WaitForSeconds(transitionTime);
+    }
   }
 
   //starts game when startButton is clicked
