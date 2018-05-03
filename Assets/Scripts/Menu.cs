@@ -8,6 +8,7 @@ public class Menu : MonoBehaviour
 {
   //private constants
   private Vector2 titleOffset {get{return new Vector2(0, -400);}}
+  private int titleDisplayTime {get{return 3;}}
   //private components
   private Button startButton;
   private Button exitButton;
@@ -43,14 +44,18 @@ public class Menu : MonoBehaviour
   //coroutine for sliding title up and revealing main menu
   private IEnumerator titleTransition()
   {
-    Debug.Log(Mathf.Abs(titleOffset.y));
-    for(int i = 0; i <= Mathf.Abs(titleOffset.y); i++)
+    yield return new WaitForSeconds(titleDisplayTime);
+    Vector2 startPos = trans.localPosition;
+    //speeds up as i increases each loop
+    int i = 1;
+    while(startPos.y - trans.localPosition.y > titleOffset.y)
     {
       Vector2 pos = trans.localPosition;
       Debug.Log(trans.localPosition);
-      pos += new Vector2(0, 1);
+      pos += new Vector2(0, i);
       trans.localPosition = pos;
-      yield return null;//new WaitForSeconds(transitionTime);
+      i++;
+      yield return null;
     }
   }
 
