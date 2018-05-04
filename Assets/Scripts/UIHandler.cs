@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//handles notifications, buttons, sounds
+//handles notifications, buttons, sounds in the game scene
 //also handles updating from playerdata file into the actual game
 
 public class UIHandler : MonoBehaviour

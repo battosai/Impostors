@@ -6,15 +6,19 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+  //public attributes
+  public List<Sprite> musicToggleSprites;
   //private constants
   private Vector2 titleOffset {get{return new Vector2(0, -400);}}
   private int titleDisplayTime {get{return 3;}}
   //private components
   private Button startButton;
-  private Button exitButton;
-  private Button optionsButton;
+  private Button quitButton;
+  private Button musicButton;
   private Button aboutButton;
   private Button backButton;
+  private Image musicImageValid;
+  private SpriteState musicSpriteState;
   private Transform trans;
   // private MeshRenderer aboutMesh;
   // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
@@ -24,35 +28,37 @@ public class Menu : MonoBehaviour
     //call load to call constructor for playerdata
     PlayerData.load();
     startButton = GameObject.Find("StartButton").GetComponent<Button>();
-    exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
-    optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
+    quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
+    musicButton = GameObject.Find("MusicButton").GetComponent<Button>();
     aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
     backButton = GameObject.Find("BackButton").GetComponent<Button>();
+    musicImage = GameObject.Find("MusicButton").GetComponent<Image>();
+    musicSpriteState= GameObject.Find("MusicButton").GetComponent<Button>().spriteState;
     trans = GetComponent<Transform>();
     // aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
+    initializeMusicSprites();
   }
 
   void Start()
   {
     startButton.onClick.AddListener(startGame);
-    exitButton.onClick.AddListener(exitApp);
-    optionsButton.onClick.AddListener(customizeOptions);
+    quitButton.onClick.AddListener(exitApp);
+    musicButton.onClick.AddListener(toggleMusic);
     aboutButton.onClick.AddListener(displayAbout);
     backButton.onClick.AddListener(backToMainWrapper);
     //transition from title to mainmenu
-    StartCoroutine(transition(false));
-    //trans.position = titleOffset;
+    StartCoroutine(transition(false, titleDisplayTime));
   }
 
   //acts as the onclick listener for backbutton
   private void backToMainWrapper()
   {
-    StartCoroutine(transition(true));
+    StartCoroutine(transition(true, 0));
   }
   //coroutine for sliding from main menu to about
-  //SHOULD PROBABLY COMBINE ABOUT TRANSITION AND TITLE TRANSITION, USE BOOL DIRECTION AS PARAM
-  private IEnumerator transition(bool up)
+  private IEnumerator transition(bool up, int delay)
   {
+    yield return new WaitForSeconds(delay);
     Vector2 startPos = trans.localPosition;
     //speeds up as i increases each loop
     int i = 1;
@@ -93,7 +99,7 @@ public class Menu : MonoBehaviour
     SceneManager.LoadScene("Game");
   }
 
-  //exits app when exitButton is clicked
+  //exits app when quitButton is clicked
   private void exitApp()
   {
     //save persistent data
@@ -105,13 +111,29 @@ public class Menu : MonoBehaviour
     // Application.Quit();
   }
 
-  //opens options menu when optionsButton is clicked
-  private void customizeOptions()
+  //only called at start of app
+  private void initializeMusicSprites()
   {
-    //be sure to set these values in playerpref
-    //Debug.Log("you aren't anyones' 'option' gurl");
-    //temporary for testing saveload
+    int i = 0;
+    if(!PlayerData.isMusicOn)
+      i++;
+    musicImage.sprite = musicToggleSprites[2*i];
+    musicSpriteState.pressedSprite = musicToggleSprites[2*i+1];
+  }
+
+  //toggles music when musicButton is clicked
+  //NOT SURE WHY BUT PRESSED SPRITE DOESNT CHANGE
+  private void toggleMusic()
+  {
+    //update playerdata
     PlayerData.toggleMusic();
+    //swap sprites
+    int i = 0;
+    if(!PlayerData.isMusicOn)
+      i++;
+    musicImage.sprite = musicToggleSprites[2*i];
+    musicSpriteState.pressedSprite = musicToggleSprites[(2*i)+1];
+    Debug.Log("Pressed Sprite should be element " + (2*i+1));
   }
 
   //display about page when aboutButton is clicked
@@ -119,6 +141,6 @@ public class Menu : MonoBehaviour
   {
     //give the player some brian bio
     Debug.Log("do you have some time to learn about brian");
-    StartCoroutine(transition(false));
+    StartCoroutine(transition(false, 0));
   }
 }
