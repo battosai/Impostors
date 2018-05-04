@@ -17,7 +17,7 @@ public class Menu : MonoBehaviour
   private Button musicButton;
   private Button aboutButton;
   private Button backButton;
-  private Image musicImageValid;
+  private Image musicImage;
   private SpriteState musicSpriteState;
   private Transform trans;
   // private MeshRenderer aboutMesh;

@@ -202,13 +202,13 @@ public class UIHandler : MonoBehaviour
     if(isDefector)
     {
       //found defector
-      missionResultImage.sprite = missionResultSprites[0];
+      missionResultImage.sprite = missionResultSprites[1];
       missionResultMesh.GetComponent<TextMesh>().text = interrogationVictoryText;
     }
     else
     {
       //found alliance member
-      missionResultImage.sprite = missionResultSprites[1];
+      missionResultImage.sprite = missionResultSprites[0];
       missionResultMesh.GetComponent<TextMesh>().text = interrogationLossText;
     }
   }
