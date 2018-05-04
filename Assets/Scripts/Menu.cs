@@ -14,6 +14,7 @@ public class Menu : MonoBehaviour
   private Button exitButton;
   private Button optionsButton;
   private Button aboutButton;
+  private Button backButton;
   private Transform trans;
   // private MeshRenderer aboutMesh;
   // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
@@ -26,6 +27,7 @@ public class Menu : MonoBehaviour
     exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
     optionsButton = GameObject.Find("OptionsButton").GetComponent<Button>();
     aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
+    backButton = GameObject.Find("BackButton").GetComponent<Button>();
     trans = GetComponent<Transform>();
     // aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
   }
@@ -36,26 +38,47 @@ public class Menu : MonoBehaviour
     exitButton.onClick.AddListener(exitApp);
     optionsButton.onClick.AddListener(customizeOptions);
     aboutButton.onClick.AddListener(displayAbout);
+    backButton.onClick.AddListener(backToMainWrapper);
     //transition from title to mainmenu
-    StartCoroutine(titleTransition());
+    StartCoroutine(transition(false));
     //trans.position = titleOffset;
   }
 
-  //coroutine for sliding title up and revealing main menu
-  private IEnumerator titleTransition()
+  //acts as the onclick listener for backbutton
+  private void backToMainWrapper()
   {
-    yield return new WaitForSeconds(titleDisplayTime);
+    StartCoroutine(transition(true));
+  }
+  //coroutine for sliding from main menu to about
+  //SHOULD PROBABLY COMBINE ABOUT TRANSITION AND TITLE TRANSITION, USE BOOL DIRECTION AS PARAM
+  private IEnumerator transition(bool up)
+  {
     Vector2 startPos = trans.localPosition;
     //speeds up as i increases each loop
     int i = 1;
-    while(startPos.y - trans.localPosition.y > titleOffset.y)
+    //going back to mainmenu
+    if(up)
     {
-      Vector2 pos = trans.localPosition;
-      Debug.Log(trans.localPosition);
-      pos += new Vector2(0, i);
-      trans.localPosition = pos;
-      i++;
-      yield return null;
+      while(trans.localPosition.y - startPos.y > titleOffset.y)
+      {
+        Vector2 pos = trans.localPosition;
+        pos -= new Vector2(0, i);
+        trans.localPosition = pos;
+        i++;
+        yield return null;
+      }
+    }
+    //going to about
+    else
+    {
+      while(startPos.y - trans.localPosition.y > titleOffset.y)
+      {
+        Vector2 pos = trans.localPosition;
+        pos += new Vector2(0, i);
+        trans.localPosition = pos;
+        i++;
+        yield return null;
+      }
     }
   }
 
@@ -96,5 +119,6 @@ public class Menu : MonoBehaviour
   {
     //give the player some brian bio
     Debug.Log("do you have some time to learn about brian");
+    StartCoroutine(transition(false));
   }
 }
