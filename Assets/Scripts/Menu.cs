@@ -9,7 +9,7 @@ public class Menu : MonoBehaviour
   //public attributes
   public List<Sprite> musicToggleSprites;
   //private constants
-  private Vector2 titleOffset {get{return new Vector2(0, -400);}}
+  private Vector2 titleOffset {get{return new Vector2(0, -1000);}}
   private int titleDisplayTime {get{return 3;}}
   //private components
   private Button startButton;
