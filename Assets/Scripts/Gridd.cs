@@ -6,6 +6,8 @@ using UnityEngine;
 public class Gridd : MonoBehaviour
 {
 	//public read-only constants
+	public Vector2 gridScale {get{return transform.localScale;}}
+	public Vector2 gridPosition {get{return transform.localPosition;}}
 	public float offset {get{return 10.5f;}}
 	public float headCount {get{return 9;}}
 	public int defectorCount {get{return 2;}}
@@ -31,6 +33,9 @@ public class Gridd : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		//match grid scale
+		selectedBorderSprite.transform.localScale = new Vector2(gridScale.x, gridScale.y);
+		deadSprite.transform.localScale = new Vector2(gridScale.x, gridScale.y);
 	}
 
 	// Update is called once per frame
@@ -106,14 +111,14 @@ public class Gridd : MonoBehaviour
 		float y = 0f;
 		for(int i = 0; i < gridDimensions; i++)
 		{
-			float x = -offset;
+			float x = -offset*gridScale.x + gridPosition.x;
 			for(int j = 0; j < gridDimensions; j++)
 			{
 				int index = i*gridDimensions + j;
 				heads[index].transform.position = new Vector3(x, y, defaultGridZ);
-				x += offset;
+				x += offset*gridScale.x + gridPosition.x;
 			}
-			y += -offset;
+			y += -offset*gridScale.y + gridPosition.y;
 		}
 	}
 }

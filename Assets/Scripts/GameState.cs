@@ -14,7 +14,8 @@ public class GameState : MonoBehaviour
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
-	public static bool canRestart {get; private set;}
+	public static bool isGameOver {get; private set;}
+	public static bool isEndGameChecked {get; private set;}
 	public static int gameRound {get; private set;}
 	//private attributes
 	private UIHandler uiHandler;
@@ -37,13 +38,14 @@ public class GameState : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		uiHandler.reset();
-		gridd.resetGridd();
-		gridd.resetSelectedHeads();
-		canRestart = false;
+		isGameOver = false;
+		isEndGameChecked = false;
 		gameRound = 0;
 		playerScore = 0;
 		defectorScore = 0;
+		uiHandler.reset();
+		gridd.resetGridd();
+		gridd.resetSelectedHeads();
 		proceedButton.onClick.AddListener(proceedToNextRound);
 		replayButton.onClick.AddListener(replayGame);
 		backButton.onClick.AddListener(backToMainMenu);
@@ -54,7 +56,7 @@ public class GameState : MonoBehaviour
 	void Update()
 	{
 		//debugging: shows the number of people to select for current round
-		//Debug.Log(selectCount[gameRound]);
+		// Debug.Log(selectCount[gameRound]);
 	}
 
 	//returns to main menu scene from game scene
@@ -81,6 +83,8 @@ public class GameState : MonoBehaviour
 	//resets game scores, rounds, grid layout, and heads
 	private void replayGame()
 	{
+		isGameOver = false;
+		isEndGameChecked = false;
 		gameRound = 0;
 		playerScore = 0;
 		defectorScore = 0;
@@ -119,6 +123,7 @@ public class GameState : MonoBehaviour
 	private IEnumerator processMission(bool isDefectorPresent)
 	{
 		Debug.Log("processing mission...");
+		isEndGameChecked = false;
 		StartCoroutine(uiHandler.processMission(isDefectorPresent));
 		yield return new WaitForSeconds(waitTime*2);
 		if(isDefectorPresent)
@@ -130,9 +135,17 @@ public class GameState : MonoBehaviour
 			playerWinRound();
 		}
 		checkEndGame();
-		gridd.resetSelectedHeads();
 		if(gameRound + 1 < gameRoundCount)
 			gameRound++;
+		isEndGameChecked = true;
+		//wait until uihandler is done processing
+		if(uiHandler.isProcessing)
+		{
+			yield return new WaitForSeconds(0.1f);
+		}
+		gridd.resetSelectedHeads();
+		// if(gameRound + 1 < gameRoundCount)
+		// 	gameRound++;
 	}
 
 	private IEnumerator processInterrogation(bool isDefector)
@@ -146,10 +159,11 @@ public class GameState : MonoBehaviour
 			gameRound++;
 	}
 
-	private void checkEndGame()
+	public void checkEndGame()
 	{
 		if(playerScore == winScore || defectorScore == winScore)
 		{
+			isGameOver = true;
 			if(playerScore > defectorScore)
 			{
 				Debug.Log("Allied Victory!");

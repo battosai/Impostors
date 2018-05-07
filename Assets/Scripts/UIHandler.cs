@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class UIHandler : MonoBehaviour
 {
+  //public read-only attributes
+  public bool isProcessing;
   //public attributes
   public List<Sprite> missionResultSprites;
 	public AudioClip missionVictorySound;
@@ -21,16 +23,17 @@ public class UIHandler : MonoBehaviour
   private GameObject endGameMenu;
 	private Image deathImage;
   private Image missionResultImage;
+  private Image proceedImage;
   private MeshRenderer missionResultMesh;
 	private MeshRenderer deathMesh;
   private MeshRenderer instructionMesh;
 	private AudioSource audioSource;
   private AudioSource musicAudioSource;
 	private Button proceedButton;
-  private string missionText {get{return "select " + GameState.selectCount[GameState.gameRound].ToString() + " members for a mission.";}}
-  private string missionVictoryText {get{return "successful mission!";}}
-  private string missionLossText {get{return "failed mission!";}}
-  private string interrogationVictoryText {get{return "this is a defector!";}}
+  private string missionText {get{return "pick " + GameState.selectCount[GameState.gameRound].ToString() + " members\nfor a mission.";}}
+  private string missionVictoryText {get{return "nice work team!";}}
+  private string missionLossText {get{return "sabotaged!";}}
+  private string interrogationVictoryText {get{return "this is an impostor!";}}
   private string interrogationLossText {get{return "this is an\nalliance member!";}}
   private string interrogationText {get{return "interrogate 1 individual";}}
 	private string deathText {get{return "an alliance member\nhas been killed!";}}
@@ -43,6 +46,7 @@ public class UIHandler : MonoBehaviour
     deathMesh = GameObject.Find("DeathText").GetComponent<MeshRenderer>();
     missionResultImage = GameObject.Find("MissionResultImage").GetComponent<Image>();
     missionResultMesh = GameObject.Find("MissionResultText").GetComponent<MeshRenderer>();
+    proceedImage = GameObject.Find("ProceedButton").GetComponent<Image>();
     proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
     audioSource = GetComponent<AudioSource>();
     musicAudioSource = GameObject.Find("GameCamera").GetComponent<AudioSource>();
@@ -58,14 +62,18 @@ public class UIHandler : MonoBehaviour
     checkSelectionCount();
   }
 
+  //called in gamestate Start and on reset
   public void reset()
   {
+    updateInstructions();
+    isProcessing = false;
     instructionMesh.enabled = true;
     instructionMesh.GetComponent<TextMesh>().text = missionText;
     missionResultImage.enabled = false;
     missionResultMesh.enabled = false;
     deathImage.enabled = false;
     deathMesh.enabled = false;
+    proceedImage.enabled = true;
     proceedButton.gameObject.GetComponent<Image>().enabled = true;
 		proceedButton.interactable = true;
     endGameMenu.SetActive(false);
@@ -90,7 +98,8 @@ public class UIHandler : MonoBehaviour
   //replace with enable endgamemenu
   public void enableEndGameMenu()
   {
-    proceedButton.gameObject.GetComponent<Image>().enabled = false;
+    Debug.Log("Proceed should not be visible at end game");
+    proceedImage.enabled = false;
     proceedButton.interactable = false;
     endGameMenu.SetActive(true);
   }
@@ -130,18 +139,30 @@ public class UIHandler : MonoBehaviour
   //process mission visuals
   public IEnumerator processMission(bool isDefectorPresent)
   {
+    isProcessing = true;
     audioSource.clip = missionInProgressSound;
     audioSource.Play();
     yield return new WaitForSeconds(GameState.waitTime);
+    proceedImage.enabled = false;
     displayMissionNotif(isDefectorPresent);
     yield return new WaitForSeconds(GameState.waitTime);
     removeMissionNotif();
-    if(!isDefectorPresent)
+    //waits for gamestate.processinterrogation to update scores
+    //prevents death notifs from popping up when player wins
+    if(!GameState.isEndGameChecked)
+    {
+      yield return new WaitForSeconds(0.1f);
+    }
+    if(!isDefectorPresent && !GameState.isGameOver)
     {
       displayDeathNotif();
       yield return new WaitForSeconds(GameState.waitTime);
       removeDeathNotif();
     }
+    isProcessing = false;
+    //can insert victory and defeat sections here
+    if(!GameState.isGameOver)
+      proceedImage.enabled = true;
     updateInstructions();
   }
 
@@ -150,9 +171,11 @@ public class UIHandler : MonoBehaviour
     audioSource.clip = interrogationSound;
     audioSource.Play();
     yield return new WaitForSeconds(GameState.waitTime);
+    proceedImage.enabled = false;
     displayInterrogationNotif(isDefector);
     yield return new WaitForSeconds(GameState.waitTime);
     removeInterrogationNotif();
+    proceedImage.enabled = true;
     updateInstructions();
   }
 
