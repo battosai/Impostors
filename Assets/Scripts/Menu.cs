@@ -106,9 +106,9 @@ public class Menu : MonoBehaviour
     PlayerData.save();
     Debug.Log("Saved!");
     //for editor, use below for exiting
-    UnityEditor.EditorApplication.isPlaying = false;
+    //UnityEditor.EditorApplication.isPlaying = false;
     //for build, use below for exiting
-    // Application.Quit();
+    Application.Quit();
   }
 
   //only called at start of app

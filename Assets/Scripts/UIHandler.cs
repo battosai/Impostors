@@ -225,12 +225,16 @@ public class UIHandler : MonoBehaviour
     if(isDefector)
     {
       //found defector
+      audioSource.clip = missionLossSound;
+      audioSource.Play();
       missionResultImage.sprite = missionResultSprites[1];
       missionResultMesh.GetComponent<TextMesh>().text = interrogationVictoryText;
     }
     else
     {
       //found alliance member
+      audioSource.clip = missionVictorySound;
+      audioSource.Play();
       missionResultImage.sprite = missionResultSprites[0];
       missionResultMesh.GetComponent<TextMesh>().text = interrogationLossText;
     }

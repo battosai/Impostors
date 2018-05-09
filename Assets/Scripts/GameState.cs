@@ -75,9 +75,9 @@ public class GameState : MonoBehaviour
     PlayerData.save();
     Debug.Log("Saved!");
     //for editor, use below for exiting
-    UnityEditor.EditorApplication.isPlaying = false;
+    //UnityEditor.EditorApplication.isPlaying = false;
     //for build, use below for exiting
-    // Application.Quit();
+    Application.Quit();
 	}
 
 	//resets game scores, rounds, grid layout, and heads
@@ -144,8 +144,6 @@ public class GameState : MonoBehaviour
 			yield return new WaitForSeconds(0.1f);
 		}
 		gridd.resetSelectedHeads();
-		// if(gameRound + 1 < gameRoundCount)
-		// 	gameRound++;
 	}
 
 	private IEnumerator processInterrogation(bool isDefector)
