@@ -10,7 +10,7 @@ public class GameState : MonoBehaviour
 	public int winScore {get{return 3;}}
 	public int gameRoundCount {get{return 7;}}
 	public static int waitTime {get{return 2;}}
-	public static List<int> selectCount {get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
+	public static List<int> selectCount = new List<int> {3, 4, 1, 5, 5, 1, 5};//{get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
 	//public attributes, but only changeable within class
 	public int playerScore {get; private set;}
 	public int defectorScore {get; private set;}
@@ -30,7 +30,7 @@ public class GameState : MonoBehaviour
 		uiHandler = GameObject.Find("Player").GetComponent<UIHandler>();
 		gridd = GameObject.Find("Gridd").GetComponent<Gridd>();
 		proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
-    replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
+    	replayButton = GameObject.Find("ReplayButton").GetComponent<Button>();
 		exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
 		backButton = GameObject.Find("BackButton").GetComponent<Button>();
 	}
@@ -52,13 +52,6 @@ public class GameState : MonoBehaviour
 		exitButton.onClick.AddListener(exitApp);
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-		//debugging: shows the number of people to select for current round
-		// Debug.Log(selectCount[gameRound]);
-	}
-
 	//returns to main menu scene from game scene
 	private void backToMainMenu()
 	{
@@ -72,12 +65,12 @@ public class GameState : MonoBehaviour
 	private void exitApp()
 	{
 		//save persistent data
-    PlayerData.save();
-    Debug.Log("Saved!");
-    //for editor, use below for exiting
-    //UnityEditor.EditorApplication.isPlaying = false;
-    //for build, use below for exiting
-    Application.Quit();
+		PlayerData.save();
+		Debug.Log("Saved!");
+		//for editor, use below for exiting
+		//UnityEditor.EditorApplication.isPlaying = false;
+		//for build, use below for exiting
+		Application.Quit();
 	}
 
 	//resets game scores, rounds, grid layout, and heads
@@ -102,6 +95,7 @@ public class GameState : MonoBehaviour
 	//checks conditions for current round and advances to the next one
 	private void proceedToNextRound()
 	{
+		proceedButton.interactable = false;
 		if(selectCount[gameRound] > 1)
 		{
 			//mission round

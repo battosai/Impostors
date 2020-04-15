@@ -30,13 +30,13 @@ public class UIHandler : MonoBehaviour
 	private AudioSource audioSource;
   private AudioSource musicAudioSource;
 	private Button proceedButton;
-  private string missionText {get{return "pick " + GameState.selectCount[GameState.gameRound].ToString() + " members\nfor a mission.";}}
-  private string missionVictoryText {get{return "nice work team!";}}
-  private string missionLossText {get{return "sabotaged!";}}
-  private string interrogationVictoryText {get{return "this is an impostor!";}}
-  private string interrogationLossText {get{return "this is an\nalliance member!";}}
-  private string interrogationText {get{return "interrogate 1 individual";}}
-	private string deathText {get{return "an alliance member\nhas been killed!";}}
+  private string missionText {get{ return $"pick {GameState.selectCount[GameState.gameRound].ToString()} members\nfor a mission";}}
+  private string missionVictoryText = "nice work team!";
+  private string missionLossText = "sabotaged!";
+  private string interrogationVictoryText = "this is an impostor!";
+  private string interrogationLossText = "this is an\nalliance member!";
+  private string interrogationText = "interrogate 1\nindividual";
+	private string deathText = "an alliance member\nhas been killed!";
 
   void Awake()
   {
@@ -53,15 +53,6 @@ public class UIHandler : MonoBehaviour
     PlayerData.match(musicAudioSource);
   }
 
-  void Start()
-  {
-  }
-
-  void Update()
-  {
-    checkSelectionCount();
-  }
-
   //called in gamestate Start and on reset
   public void reset()
   {
@@ -75,7 +66,7 @@ public class UIHandler : MonoBehaviour
     deathMesh.enabled = false;
     proceedImage.enabled = true;
     proceedButton.gameObject.GetComponent<Image>().enabled = true;
-		proceedButton.interactable = true;
+		proceedButton.interactable = false;
     endGameMenu.SetActive(false);
     audioSource.loop = false;
 		audioSource.playOnAwake = false;
@@ -104,7 +95,7 @@ public class UIHandler : MonoBehaviour
     endGameMenu.SetActive(true);
   }
 
-  private void checkSelectionCount()
+  public void checkSelectionCount()
   {
     if(Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound])
     {
@@ -116,25 +107,25 @@ public class UIHandler : MonoBehaviour
     }
   }
 
-  private void proceed()
-  {
-    if(GameState.selectCount[GameState.gameRound] > 1)
-    {
-      //mission round
-      bool isDefectorPresent = false;
-      foreach(GameObject head in Gridd.selectedHeads)
-      {
-        isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
-      }
-      StartCoroutine(processMission(isDefectorPresent));
-    }
-    else
-    {
-      //interrogation round
-			GameObject currentHead = Gridd.selectedHeads[0];
-      StartCoroutine(processInterrogation(currentHead.GetComponent<Head>().isDefector));
-    }
-  }
+  // private void proceed()
+  // {
+  //   if(GameState.selectCount[GameState.gameRound] > 1)
+  //   {
+  //     //mission round
+  //     bool isDefectorPresent = false;
+  //     foreach(GameObject head in Gridd.selectedHeads)
+  //     {
+  //       isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
+  //     }
+  //     StartCoroutine(processMission(isDefectorPresent));
+  //   }
+  //   else
+  //   {
+  //     //interrogation round
+	// 		GameObject currentHead = Gridd.selectedHeads[0];
+  //     StartCoroutine(processInterrogation(currentHead.GetComponent<Head>().isDefector));
+  //   }
+  // }
 
   //process mission visuals
   public IEnumerator processMission(bool isDefectorPresent)

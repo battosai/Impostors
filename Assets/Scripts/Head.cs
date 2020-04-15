@@ -13,7 +13,7 @@ public class Head : Gridd
 	public bool isSelected {get; private set;}
 	public Collider2D coll {get; private set;}
 	//private read-only constants
-	private float defaultCloneZ {get{return 99f;}}
+	private float defaultCloneZ = 99f;
 	// private GameState gameState;
 	private UIHandler uiHandler;
 
@@ -43,6 +43,7 @@ public class Head : Gridd
 			return;
 		toggleSelected();
 		uiHandler.playSelectionSound(isSelected);
+		uiHandler.checkSelectionCount();
 	}
 
 	//gamestate calls when replaying game
@@ -100,7 +101,7 @@ public class Head : Gridd
 		if(selectedBorderClone != null)
 		{
 			int index = Gridd.heads.IndexOf(gameObject);
-			Debug.Log("Heads[" + index + "] is still selected");
+			// Debug.Log("Heads[" + index + "] is still selected");
 			Gridd.selectedHeads.Remove(Gridd.heads[index]);
 			Destroy(selectedBorderClone);
 		}
