@@ -25,8 +25,10 @@ public class UIHandler : MonoBehaviour
   private Image missionResultImage;
   private Image proceedImage;
   private MeshRenderer missionResultMesh;
+  private TextMesh missionResultTextMesh;
 	private MeshRenderer deathMesh;
   private MeshRenderer instructionMesh;
+  private TextMesh instructionTextMesh;
 	private AudioSource audioSource;
   private AudioSource musicAudioSource;
 	private Button proceedButton;
@@ -37,15 +39,18 @@ public class UIHandler : MonoBehaviour
   private string interrogationLossText = "this is an\nalliance member!";
   private string interrogationText = "interrogate 1\nindividual";
 	private string deathText = "an alliance member\nhas been killed!";
+  private string processingText = "...";
 
   void Awake()
   {
     endGameMenu = GameObject.Find("EndGameMenu");
     instructionMesh = GameObject.Find("InstructionText").GetComponent<MeshRenderer>();
+    instructionTextMesh = instructionMesh.GetComponent<TextMesh>();
     deathImage = GameObject.Find("DeathImage").GetComponent<Image>();
     deathMesh = GameObject.Find("DeathText").GetComponent<MeshRenderer>();
     missionResultImage = GameObject.Find("MissionResultImage").GetComponent<Image>();
     missionResultMesh = GameObject.Find("MissionResultText").GetComponent<MeshRenderer>();
+    missionResultTextMesh = missionResultMesh.GetComponent<TextMesh>();
     proceedImage = GameObject.Find("ProceedButton").GetComponent<Image>();
     proceedButton = GameObject.Find("ProceedButton").GetComponent<Button>();
     audioSource = GetComponent<AudioSource>();
@@ -59,7 +64,7 @@ public class UIHandler : MonoBehaviour
     updateInstructions();
     isProcessing = false;
     instructionMesh.enabled = true;
-    instructionMesh.GetComponent<TextMesh>().text = missionText;
+    instructionTextMesh.text = missionText;
     missionResultImage.enabled = false;
     missionResultMesh.enabled = false;
     deathImage.enabled = false;
@@ -107,32 +112,13 @@ public class UIHandler : MonoBehaviour
     }
   }
 
-  // private void proceed()
-  // {
-  //   if(GameState.selectCount[GameState.gameRound] > 1)
-  //   {
-  //     //mission round
-  //     bool isDefectorPresent = false;
-  //     foreach(GameObject head in Gridd.selectedHeads)
-  //     {
-  //       isDefectorPresent = isDefectorPresent || head.GetComponent<Head>().isDefector;
-  //     }
-  //     StartCoroutine(processMission(isDefectorPresent));
-  //   }
-  //   else
-  //   {
-  //     //interrogation round
-	// 		GameObject currentHead = Gridd.selectedHeads[0];
-  //     StartCoroutine(processInterrogation(currentHead.GetComponent<Head>().isDefector));
-  //   }
-  // }
-
   //process mission visuals
   public IEnumerator processMission(bool isDefectorPresent)
   {
     isProcessing = true;
     audioSource.clip = missionInProgressSound;
     audioSource.Play();
+    instructionTextMesh.text = processingText;
     yield return new WaitForSeconds(GameState.waitTime);
     proceedImage.enabled = false;
     displayMissionNotif(isDefectorPresent);
@@ -161,6 +147,7 @@ public class UIHandler : MonoBehaviour
   {
     audioSource.clip = interrogationSound;
     audioSource.Play();
+    instructionTextMesh.text = processingText;
     yield return new WaitForSeconds(GameState.waitTime);
     proceedImage.enabled = false;
     displayInterrogationNotif(isDefector);
@@ -173,9 +160,9 @@ public class UIHandler : MonoBehaviour
   private void updateInstructions()
   {
     if(GameState.selectCount[GameState.gameRound] == 1)
-      instructionMesh.GetComponent<TextMesh>().text = interrogationText;
+      instructionTextMesh.text = interrogationText;
     else
-      instructionMesh.GetComponent<TextMesh>().text = missionText;
+      instructionTextMesh.text = missionText;
   }
 
   //shares objects with displayInterrogationNotif
@@ -189,7 +176,7 @@ public class UIHandler : MonoBehaviour
       audioSource.clip = missionLossSound;
       audioSource.Play();
       missionResultImage.sprite = missionResultSprites[1];
-      missionResultMesh.GetComponent<TextMesh>().text = missionLossText;
+      missionResultTextMesh.text = missionLossText;
     }
     else
     {
@@ -197,7 +184,7 @@ public class UIHandler : MonoBehaviour
       audioSource.clip = missionVictorySound;
       audioSource.Play();
       missionResultImage.sprite = missionResultSprites[0];
-      missionResultMesh.GetComponent<TextMesh>().text = missionVictoryText;
+      missionResultTextMesh.text = missionVictoryText;
     }
   }
 
@@ -219,7 +206,7 @@ public class UIHandler : MonoBehaviour
       audioSource.clip = missionLossSound;
       audioSource.Play();
       missionResultImage.sprite = missionResultSprites[1];
-      missionResultMesh.GetComponent<TextMesh>().text = interrogationVictoryText;
+      missionResultTextMesh.text = interrogationVictoryText;
     }
     else
     {
@@ -227,7 +214,7 @@ public class UIHandler : MonoBehaviour
       audioSource.clip = missionVictorySound;
       audioSource.Play();
       missionResultImage.sprite = missionResultSprites[0];
-      missionResultMesh.GetComponent<TextMesh>().text = interrogationLossText;
+      missionResultTextMesh.text = interrogationLossText;
     }
   }
 
