@@ -20,6 +20,7 @@ public class Menu : MonoBehaviour
   private Image musicImage;
   private SpriteState musicSpriteState;
   private Transform trans;
+  public AudioSource audio;
   // private MeshRenderer aboutMesh;
   // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
 
@@ -46,6 +47,7 @@ public class Menu : MonoBehaviour
     musicButton.onClick.AddListener(toggleMusic);
     aboutButton.onClick.AddListener(displayAbout);
     backButton.onClick.AddListener(backToMainWrapper);
+    audio.enabled = PlayerData.isMusicOn;
     //transition from title to mainmenu
     StartCoroutine(transition(false, titleDisplayTime));
   }
@@ -133,7 +135,7 @@ public class Menu : MonoBehaviour
       i++;
     musicImage.sprite = musicToggleSprites[2*i];
     musicSpriteState.pressedSprite = musicToggleSprites[(2*i)+1];
-    Debug.Log("Pressed Sprite should be element " + (2*i+1));
+    audio.enabled = PlayerData.isMusicOn;
   }
 
   //display about page when aboutButton is clicked
