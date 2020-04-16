@@ -15,8 +15,8 @@ public class Menu : MonoBehaviour
   private Button startButton;
   private Button quitButton;
   private Button musicButton;
-  private Button aboutButton;
-  private Button backButton;
+  private Button tutorialButton;
+  public Button[] backButtons;
   private Image musicImage;
   private SpriteState musicSpriteState;
   private Transform trans;
@@ -31,8 +31,7 @@ public class Menu : MonoBehaviour
     startButton = GameObject.Find("StartButton").GetComponent<Button>();
     quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
     musicButton = GameObject.Find("MusicButton").GetComponent<Button>();
-    aboutButton = GameObject.Find("AboutButton").GetComponent<Button>();
-    backButton = GameObject.Find("BackButton").GetComponent<Button>();
+    tutorialButton = GameObject.Find("TutorialButton").GetComponent<Button>();
     musicImage = GameObject.Find("MusicButton").GetComponent<Image>();
     musicSpriteState= GameObject.Find("MusicButton").GetComponent<Button>().spriteState;
     trans = GetComponent<Transform>();
@@ -45,8 +44,9 @@ public class Menu : MonoBehaviour
     startButton.onClick.AddListener(startGame);
     quitButton.onClick.AddListener(exitApp);
     musicButton.onClick.AddListener(toggleMusic);
-    aboutButton.onClick.AddListener(displayAbout);
-    backButton.onClick.AddListener(backToMainWrapper);
+    tutorialButton.onClick.AddListener(displayTutorial);
+    foreach(Button backButton in backButtons)
+      backButton.onClick.AddListener(backToMainWrapper);
     audio.enabled = PlayerData.isMusicOn;
     //transition from title to mainmenu
     StartCoroutine(transition(false, titleDisplayTime));
@@ -138,11 +138,9 @@ public class Menu : MonoBehaviour
     audio.enabled = PlayerData.isMusicOn;
   }
 
-  //display about page when aboutButton is clicked
-  private void displayAbout()
+  //display tutorial page when tutorialButton is clicked
+  private void displayTutorial()
   {
-    //give the player some brian bio
-    Debug.Log("do you have some time to learn about brian");
     StartCoroutine(transition(false, 0));
   }
 }

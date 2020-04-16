@@ -7,13 +7,13 @@ using UnityEngine.SceneManagement;
 public class GameState : MonoBehaviour
 {
 	//public read-only constants
-	public int winScore {get{return 3;}}
-	public int gameRoundCount {get{return 7;}}
-	public static int waitTime {get{return 2;}}
+	public static readonly int winScore = 3;
+	public readonly int gameRoundCount = 7;
+	public static readonly int waitTime = 2;
 	public static List<int> selectCount = new List<int> {3, 4, 1, 5, 5, 1, 5};//{get{return new List<int> {3, 4, 1, 5, 5, 1, 5};}}
 	//public attributes, but only changeable within class
-	public int playerScore {get; private set;}
-	public int defectorScore {get; private set;}
+	public static int playerScore {get; private set;}
+	public static int defectorScore {get; private set;}
 	public static bool isGameOver {get; private set;}
 	public static bool isEndGameChecked {get; private set;}
 	public static int gameRound {get; private set;}
@@ -83,6 +83,7 @@ public class GameState : MonoBehaviour
 		defectorScore = 0;
 		updateScoreboards();
 		gridd.resetGridd();
+		Debug.Log($"Currently selecting {Gridd.selectedHeads.Count} heads");
 		gridd.resetSelectedHeads();
 		foreach(GameObject head in Gridd.heads)
 		{
@@ -159,11 +160,13 @@ public class GameState : MonoBehaviour
 			if(playerScore > defectorScore)
 			{
 				Debug.Log("Allied Victory!");
+				uiHandler.displayGameResultText(true);
 				PlayerData.addToken();
 			}
 			else if(defectorScore > playerScore)
 			{
 				Debug.Log("Defected Victory!");
+				uiHandler.displayGameResultText(false);
 			}
 			uiHandler.enableEndGameMenu();
 		}

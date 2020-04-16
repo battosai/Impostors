@@ -40,6 +40,8 @@ public class UIHandler : MonoBehaviour
   private string interrogationText = "interrogate 1\nindividual";
 	private string deathText = "an alliance member\nhas been killed!";
   private string processingText = "...";
+  private string gameVictoryText = "=VICTORY=";
+  private string gameLossText = "=DEFEAT=";
 
   void Awake()
   {
@@ -94,7 +96,6 @@ public class UIHandler : MonoBehaviour
   //replace with enable endgamemenu
   public void enableEndGameMenu()
   {
-    Debug.Log("Proceed should not be visible at end game");
     proceedImage.enabled = false;
     proceedButton.interactable = false;
     endGameMenu.SetActive(true);
@@ -139,8 +140,10 @@ public class UIHandler : MonoBehaviour
     isProcessing = false;
     //can insert victory and defeat sections here
     if(!GameState.isGameOver)
+    {
       proceedImage.enabled = true;
-    updateInstructions();
+      updateInstructions();
+    }
   }
 
   public IEnumerator processInterrogation(bool isDefector)
@@ -237,5 +240,10 @@ public class UIHandler : MonoBehaviour
   {
     deathImage.enabled = false;
     deathMesh.enabled = false;
+  }
+
+  public void displayGameResultText(bool win)
+  {
+    instructionTextMesh.text = win ? gameVictoryText : gameLossText;
   }
 }

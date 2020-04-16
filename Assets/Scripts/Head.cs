@@ -39,7 +39,7 @@ public class Head : Gridd
 	void OnMouseDown()
 	{
 		//when selectCount is reached, can only deselect
-		if(Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound] && !isSelected)
+		if((Gridd.selectedHeads.Count == GameState.selectCount[GameState.gameRound] && !isSelected) || GameState.isGameOver)
 			return;
 		toggleSelected();
 		uiHandler.playSelectionSound(isSelected);
@@ -56,6 +56,7 @@ public class Head : Gridd
 		}
 		if(isDead && deadClone != null)
 		{
+			isSelected = false;
 			isDead = false;
 			Destroy(deadClone);
 			coll.enabled = true;
@@ -93,6 +94,7 @@ public class Head : Gridd
 		{
 			Debug.Log("bool selected and gameObject selectedBorderClone not synced");
 		}
+
 	}
 
 	public void killHead()
