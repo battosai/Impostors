@@ -1,6 +1,6 @@
 {
 "companyName": "battosai",
-"productName": "Impostor",
+"productName": "impostors",
 "productVersion": "1.0",
 "dataUrl": "WebGLBuild.data.unityweb",
 "wasmCodeUrl": "WebGLBuild.wasm.code.unityweb",
