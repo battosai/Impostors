@@ -6,141 +6,277 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
-  //public attributes
-  public List<Sprite> musicToggleSprites;
-  //private constants
-  private Vector2 titleOffset {get{return new Vector2(0, -1000);}}
-  private int titleDisplayTime {get{return 3;}}
-  //private components
+  /// <summary>
+  /// Object for the title image.
+  /// </summary>
+  private GameObject title;
+
+  /// <summary>
+  /// Parent object for the main menu buttons.
+  /// </summary>
+  private GameObject mainMenu;
+  
+  /// <summary>
+  /// Button for start game.
+  /// </summary>
   private Button startButton;
+  
+  /// <summary>
+  /// Button for quit game.
+  /// </summary>
   private Button quitButton;
+  
+  /// <summary>
+  /// Button for mute/unmute music.
+  /// </summary>
   private Button musicButton;
-  private Button tutorialButton;
-  public Button[] backButtons;
+  
+  /// <summary>
+  /// Image component of music button.
+  /// </summary>
   private Image musicImage;
+  
+  /// <summary>
+  /// Sprite state of music button.
+  /// </summary>
   private SpriteState musicSpriteState;
-  private Transform trans;
-  public AudioSource audio;
-  // private MeshRenderer aboutMesh;
-  // private string aboutText {get{return "dev::briantsai...thanksforplaying";}}
 
-  void Awake()
+  /// <summary>
+  /// Pressed/unpressed states for music when off/on.
+  /// </summary>
+  public List<Sprite> musicToggleSprites;
+
+  /// <summary>
+  /// Button for tutorial info.
+  /// </summary>
+  private Button tutorialButton;
+
+  /// <summary>
+  /// Parent object for tutorial page.
+  /// </summary>
+  private GameObject tutorial;
+
+  /// <summary>
+  /// Button to go back from tutorial to main menu.
+  /// </summary>
+  private Button backButton;
+
+  /// <summary>
+  /// Music sound source.
+  /// </summary>
+  private AudioSource audioSource;
+
+  /// <summary>
+  /// Reference to click sound for buttons.
+  /// </summary>
+  public AudioClip click;
+
+  /// <summary>
+  /// Cached position of title at start. 
+  /// </summary>
+  private Vector3 titleStartPos;  
+
+  /// <summary>
+  /// Cached position of main menu at start.
+  /// </summary>
+  private Vector3 mainMenuStartPos;
+
+  /// <summary>
+  /// Initialization Pt I.
+  /// </summary>
+  private void Awake()
   {
-    //call load to call constructor for playerdata
+    title = transform.Find("Title").gameObject;
+
+    // Main menu references
+    mainMenu = transform.Find("Main").gameObject;
+    startButton = mainMenu.transform.Find("StartButton").GetComponent<Button>();
+    quitButton = mainMenu.transform.Find("QuitButton").GetComponent<Button>();
+    musicButton = mainMenu.transform.Find("MusicButton").GetComponent<Button>();
+    musicImage = musicButton.GetComponent<Image>();
+    musicSpriteState = musicButton.spriteState;
+    tutorialButton = mainMenu.transform.Find("TutorialButton").GetComponent<Button>();
+
+    // Tutorial references
+    tutorial = transform.Find("Tutorial").gameObject;
+    backButton = tutorial.transform.Find("BackButton").GetComponent<Button>();
+
+    audioSource = Camera.main.GetComponent<AudioSource>();
+  }
+
+  /// <summary>
+  /// Initialization Pt II.
+  /// </summary>
+  private void Start()
+  {
+    startButton.onClick.AddListener(StartGame);
+    quitButton.onClick.AddListener(ExitApp);
+    musicButton.onClick.AddListener(ToggleMusic);
+    tutorialButton.onClick.AddListener(DisplayTutorial);
+    backButton.onClick.AddListener(() =>
+    {
+      MainMenu(true);
+    });
+
+    // Toggle music based on player data
     PlayerData.load();
-    startButton = GameObject.Find("StartButton").GetComponent<Button>();
-    quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
-    musicButton = GameObject.Find("MusicButton").GetComponent<Button>();
-    tutorialButton = GameObject.Find("TutorialButton").GetComponent<Button>();
-    musicImage = GameObject.Find("MusicButton").GetComponent<Image>();
-    musicSpriteState= GameObject.Find("MusicButton").GetComponent<Button>().spriteState;
-    trans = GetComponent<Transform>();
-    // aboutMesh = GameObject.Find("AboutText").GetComponent<MeshRenderer>();
-    initializeMusicSprites();
+    audioSource.enabled = PlayerData.isMusicOn;
+    int i = PlayerData.isMusicOn ? 0 : 1;
+    musicImage.sprite = musicToggleSprites[2 * i];
+    musicSpriteState.pressedSprite = musicToggleSprites[2 * i + 1];
+
+    // Save starting positions
+    titleStartPos = title.transform.position;
+    mainMenuStartPos = mainMenu.transform.position;
+
+    mainMenu.SetActive(false);
+    tutorial.SetActive(false);
+    title.SetActive(true);
+
+    // Blink animation = 1.5s
+    // Move animation = 1.5s
+    StartCoroutine(IntroSequence(3f));
   }
 
-  void Start()
+  /// <summary>
+  /// Wrapper for displaying main menu after a delay.
+  /// </summary>
+  private IEnumerator IntroSequence(float delay_s)
   {
-    startButton.onClick.AddListener(startGame);
-    quitButton.onClick.AddListener(exitApp);
-    musicButton.onClick.AddListener(toggleMusic);
-    tutorialButton.onClick.AddListener(displayTutorial);
-    foreach(Button backButton in backButtons)
-      backButton.onClick.AddListener(backToMainWrapper);
-    audio.enabled = PlayerData.isMusicOn;
-    //transition from title to mainmenu
-    StartCoroutine(transition(false, titleDisplayTime));
-  }
-
-  //acts as the onclick listener for backbutton
-  private void backToMainWrapper()
-  {
-    StartCoroutine(transition(true, 0));
-  }
-  //coroutine for sliding from main menu to about
-  private IEnumerator transition(bool up, int delay)
-  {
-    yield return new WaitForSeconds(delay);
-    Vector2 startPos = trans.localPosition;
-    //speeds up as i increases each loop
-    int i = 1;
-    //going back to mainmenu
-    if(up)
+    if (delay_s < 1.5f)
     {
-      while(trans.localPosition.y - startPos.y > titleOffset.y)
-      {
-        Vector2 pos = trans.localPosition;
-        pos -= new Vector2(0, i);
-        trans.localPosition = pos;
-        i++;
-        yield return null;
-      }
+      delay_s += 1.5f;
     }
-    //going to about
-    else
-    {
-      while(startPos.y - trans.localPosition.y > titleOffset.y)
-      {
-        Vector2 pos = trans.localPosition;
-        pos += new Vector2(0, i);
-        trans.localPosition = pos;
-        i++;
-        yield return null;
-      }
-    }
+
+    yield return new WaitForSeconds(1.5f);
+
+    float moveDuration_s = delay_s - 1.5f;
+
+    Coroutine titleUp = StartCoroutine(Move(
+      title.transform,
+      titleStartPos,
+      titleStartPos + Vector3.up * 10f,
+      moveDuration_s));
+
+    Coroutine mainMenuUp = StartCoroutine(Move(
+      mainMenu.transform,
+      mainMenuStartPos + Vector3.down * 10f,
+      mainMenuStartPos,
+      moveDuration_s));
+
+    mainMenu.SetActive(true);
+
+    yield return titleUp;
+    yield return mainMenuUp;
+    
+    MainMenu(false);
   }
 
-  //starts game when startButton is clicked
-  private void startGame()
+  /// <summary>
+  /// Displays the main menu.
+  /// </summary>
+  private void MainMenu(bool clicked)
   {
-    //save playerprefs from menu scene
+    if (clicked == true)
+    {
+      audioSource.PlayOneShot(click);
+    }
+
+    title.SetActive(false);
+    tutorial.SetActive(false);
+    mainMenu.SetActive(true);
+  }
+
+  /// <summary>
+  /// Starts the game.
+  /// </summary>
+  private void StartGame()
+  {
+    audioSource.PlayOneShot(click);
+
+    // Save playerprefs from menu scene
     PlayerData.save();
-    //load scene with actual game
-    //eventually make the game scene load asynchronously with a load screen
-    //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.LoadSceneAsync.html
     SceneManager.LoadScene("Game");
   }
 
-  //exits app when quitButton is clicked
-  private void exitApp()
+  /// <summary>
+  /// Exits game.
+  /// </summary>
+  private void ExitApp()
   {
-    //save persistent data
+    audioSource.PlayOneShot(click);
+
+    // Save persistent data
     PlayerData.save();
-    Debug.Log("Saved!");
-    //for editor, use below for exiting
-    //UnityEditor.EditorApplication.isPlaying = false;
-    //for build, use below for exiting
-    Application.Quit();
+
+    #if UNITY_EDITOR
+      UnityEditor.EditorApplication.isPlaying = false;
+    #else
+      Application.Quit();
+    #endif
   }
 
-  //only called at start of app
-  private void initializeMusicSprites()
+  /// <summary>
+  /// Mute/unmute music.
+  /// </summary>
+  private void ToggleMusic()
   {
-    int i = 0;
-    if(!PlayerData.isMusicOn)
-      i++;
-    musicImage.sprite = musicToggleSprites[2*i];
-    musicSpriteState.pressedSprite = musicToggleSprites[2*i+1];
-  }
-
-  //toggles music when musicButton is clicked
-  //NOT SURE WHY BUT PRESSED SPRITE DOESNT CHANGE
-  private void toggleMusic()
-  {
-    //update playerdata
+    // Update playerdata
     PlayerData.toggleMusic();
-    //swap sprites
-    int i = 0;
-    if(!PlayerData.isMusicOn)
-      i++;
+
+    // Swap sprites
+    int i = PlayerData.isMusicOn ? 0 : 1;
     musicImage.sprite = musicToggleSprites[2*i];
     musicSpriteState.pressedSprite = musicToggleSprites[(2*i)+1];
-    audio.enabled = PlayerData.isMusicOn;
+
+    audioSource.enabled = PlayerData.isMusicOn;
+    audioSource.PlayOneShot(click);
   }
 
-  //display tutorial page when tutorialButton is clicked
-  private void displayTutorial()
+  /// <summary>
+  /// Show the tutorial page.
+  /// </summary>
+  private void DisplayTutorial()
   {
-    StartCoroutine(transition(false, 0));
+    audioSource.PlayOneShot(click);
+
+    title.SetActive(false);
+    mainMenu.SetActive(false);
+    tutorial.SetActive(true);
+  }
+
+  /// <summary>
+  /// Helper for moving windows.
+  /// </summary>
+  private IEnumerator Move(
+    Transform xform,
+    Vector3 start,
+    Vector3 end,
+    float duration_s)
+  {
+    float start_s = Time.time;
+    float elapsed_s = 0f;
+
+    while (elapsed_s <= duration_s)
+    {
+      elapsed_s = Mathf.Pow(
+        (Time.time - start_s),
+        2f) * 5f;
+
+      float ratio = elapsed_s / duration_s;
+      ratio = Mathf.Min(
+        ratio,
+        1f);
+
+      Vector3 pos = Vector3.Lerp(
+        start,
+        end,
+        ratio);
+      
+      xform.position = pos;
+      yield return null;
+    }
+
+    xform.position = end;
   }
 }
